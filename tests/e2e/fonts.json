@@ -1,0 +1,45 @@
+{
+  "url": "http://localhost:8080/",
+  "noExternal": true,
+  "steps": [
+    {
+      "name": "fonts load",
+      "js": "document.fonts.ready.then(() => ['Archivo', 'IBM Plex Mono'].every(fam => [...document.fonts].some(f => f.family.replace(/\"/g, '') === fam && f.status === 'loaded')))",
+      "expect": true
+    },
+    {
+      "name": "heading uses Archivo",
+      "js": "getComputedStyle(document.querySelector('h1')).fontFamily.startsWith('Archivo')",
+      "expect": true
+    },
+    {
+      "name": "body uses Plex Mono",
+      "js": "getComputedStyle(document.body).fontFamily.startsWith('\"IBM Plex Mono\"')",
+      "expect": true
+    },
+    {
+      "name": "exactly one h1",
+      "js": "document.querySelectorAll('h1').length",
+      "expect": 1
+    },
+    {
+      "name": "nav links",
+      "js": "[...document.querySelectorAll('.nav a')].map(a => a.textContent)",
+      "expect": [
+        "E · W",
+        "WORK",
+        "ABOUT",
+        "TIMELINE",
+        "RESUME"
+      ]
+    },
+    {
+      "name": "hero copy",
+      "js": "document.querySelector('.lede').textContent",
+      "expect": "I build maintenance analytics for a Louisiana sawmill. In my own time, I turn ideas into software, like this page."
+    },
+    {
+      "shot": "hero-static.png"
+    }
+  ]
+}

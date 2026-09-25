@@ -1,0 +1,64 @@
+/* ---------- fonts (self-hosted, OFL) ---------- */
+@font-face{font-family:'Archivo';src:url('../fonts/archivo-var-latin.woff2') format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('../fonts/plex-mono-400-latin.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('../fonts/plex-mono-500-latin.woff2') format('woff2');font-weight:500;font-display:swap}
+
+/* ---------- tokens ---------- */
+:root{
+  --sky:#020308;--ink:#eaf2ff;--body:#c9d4e6;--muted:#8a9ab8;--soft:#9fb4d6;--dim:#56657f;
+  --blue:#7cc4ff;--lime:#c8f031;--line:rgba(140,170,230,.18);--panel:rgba(3,5,11,.93);
+  --display:'Archivo','Arial Narrow',sans-serif;--mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --glow:0 0 .25em rgba(120,180,255,.35);
+  --flash:0 0 .05em #fff,0 0 .3em rgba(170,215,255,.95),0 0 .9em rgba(90,150,255,.85),0 0 1.8em rgba(60,110,255,.5);
+  --gutter:clamp(16px,4vw,64px);--ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--sky);color:var(--body);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--sky);font:400 clamp(15px,1.05vw,17px)/1.65 var(--mono);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:2px}
+.skip-link{position:absolute;left:-9999px;top:10px;z-index:50;background:var(--sky);color:var(--ink);padding:.5rem .8rem;border:1px solid var(--lime)}
+.skip-link:focus{left:10px}
+.label{font:500 .75rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.display{font-family:var(--display);font-weight:700;font-variation-settings:'wdth' 125,'wght' 700;text-transform:uppercase;color:var(--ink);text-shadow:var(--glow);letter-spacing:-.005em;transition:color .8s,text-shadow .8s,opacity .9s}
+.flash{color:#fff!important;text-shadow:var(--flash)!important;transition:none!important}
+
+/* ---------- stage ---------- */
+.stage{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--sky)}
+.stage canvas,.stage img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage img{object-fit:cover;opacity:0;transition:opacity .9s}
+main,.site-footer{position:relative;z-index:1}
+
+/* ---------- nav ---------- */
+.nav{position:absolute;top:clamp(18px,4.2vh,40px);left:var(--gutter);right:var(--gutter);z-index:3;display:flex;gap:clamp(14px,2.6vw,40px);align-items:baseline;color:var(--soft)}
+.nav a{text-decoration:none;position:relative;padding:2px 0}
+.nav .home{margin-right:auto;color:var(--ink);letter-spacing:.18em}
+.nav a:not(.home)::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav a:hover,.nav a:focus-visible{color:var(--ink)}
+.nav a:not(.home):hover::after,.nav a:not(.home):focus-visible::after{transform:scaleX(1)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:0 var(--gutter)}
+.hero-block{max-width:46rem;padding-top:4vh}
+.kicker{color:var(--lime);margin:0 0 1.6rem}
+.name{font-size:clamp(3rem,8.2vw,9.5rem);line-height:.9;margin:0;font-variation-settings:'wdth' 119,'wght' 700;white-space:nowrap}
+.name .ln{display:block}
+.name .ln span{display:inline-block}
+.lede{max-width:38ch;margin:2rem 0 0;color:var(--soft)}
+.cta{margin-top:2.4rem;display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center}
+.cue{position:absolute;left:var(--gutter);bottom:4.5vh;margin:0;color:#6f82a3}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-block;font:500 .78rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink);text-decoration:none;background:rgba(124,196,255,.06);border:1px solid rgba(124,196,255,.45);border-radius:999px;padding:1rem 1.7rem;transition:transform .45s var(--ease),background .3s}
+.btn span{display:inline-block;transition:transform .45s var(--ease)}
+.btn.live,.btn.live span{transition:none}
+.btn:hover{background:rgba(124,196,255,.13)}
+
+/* ---------- footer ---------- */
+.site-footer{padding:2.4rem var(--gutter);border-top:1px solid var(--line);background:var(--panel);color:var(--dim)}
+.site-footer button{font:inherit;letter-spacing:inherit;color:var(--soft);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.site-footer button:hover{color:var(--ink)}
