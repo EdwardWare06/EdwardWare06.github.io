@@ -6,6 +6,9 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const LOCAL = /^(http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/|data:|blob:|about:)/;
+// BASE=https://edwardware06.github.io npm run e2e -- ... runs the same checks against the live site.
+const BASE = process.env.BASE ? process.env.BASE.replace(/\/$/, '') : null;
+const isLocal = u => LOCAL.test(u) || (BASE && u.startsWith(BASE + '/'));
 const KEYCODES = { Tab: 9, Enter: 13, Escape: 27, ' ': 32, PageUp: 33, PageDown: 34, End: 35, Home: 36, ArrowUp: 38, ArrowDown: 40 };
 
 async function runSpec(file) {
@@ -60,7 +63,7 @@ async function runSpec(file) {
   if (spec.touch) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
   if (spec.media || spec.mediaType) await send('Emulation.setEmulatedMedia', { media: spec.mediaType || '', features: Object.entries(spec.media || {}).map(([name, value]) => ({ name, value })) });
   if (spec.preload) await send('Page.addScriptToEvaluateOnNewDocument', { source: spec.preload });
-  await send('Page.navigate', { url: spec.url });
+  await send('Page.navigate', { url: BASE ? spec.url.replace('http://localhost:8080', BASE) : spec.url });
   await sleep(spec.settle ?? 1500);
   // Poll an expression until it is truthy (the stage compiles for a few seconds on a fresh browser profile).
   const waitFor = async (expr, ms = 20000) => {
@@ -107,7 +110,7 @@ async function runSpec(file) {
   }
   if (!spec.allowErrors && errors.length) { failed++; console.log(`FAIL  console errors:\n  ${errors.join('\n  ')}`); }
   if (spec.noExternal) {
-    const ext = requests.filter(u => !LOCAL.test(u));
+    const ext = requests.filter(u => !isLocal(u));
     if (ext.length) { failed++; console.log(`FAIL  external requests:\n  ${ext.join('\n  ')}`); }
   }
   sock.close(); await quit();

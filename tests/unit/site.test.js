@@ -84,3 +84,6 @@ test('the sitemap lists every page except the 404', () => {
   const urls = new Set([...PAGES.filter(f => f !== '404.html').map(urlOf), ...[...PLANNED].filter(p => p.endsWith('/'))]);
   assert.deepEqual(locs, [...urls].map(u => SITE + u).sort());
 });
+test('every planned page is built', () => {
+  assert.deepEqual([...PLANNED], []);
+});

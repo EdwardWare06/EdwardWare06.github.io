@@ -1,0 +1,20 @@
+{
+  "url": "http://localhost:8080/?nogl&nointro",
+  "settle": 1500,
+  "noExternal": true,
+  "steps": [
+    { "name": "home still", "js": "[!!window.__stage, document.querySelector('.stage').classList.contains('no-gl')]", "expect": [false, true] },
+    { "js": "(location.href = '/work/hunt/?nogl', true)", "wait": 1500 },
+    { "name": "hunt still", "js": "[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-2.webp'))", "expect": true },
+    { "js": "(location.href = '/work/lightning/?nogl', true)", "wait": 1500 },
+    { "name": "lightning still", "js": "[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-5.webp'))", "expect": true },
+    { "js": "(location.href = '/about/?nogl', true)", "wait": 1500 },
+    { "name": "about still", "js": "[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-0.webp'))", "expect": true },
+    { "js": "(location.href = '/timeline/?nogl', true)", "wait": 1500 },
+    { "name": "timeline still and constellation", "js": "[[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-4.webp')), !!window.__timeline]", "expect": [true, true] },
+    { "js": "(location.href = '/resume/?nogl', true)", "wait": 1500 },
+    { "name": "resume still", "js": "[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-1.webp'))", "expect": true },
+    { "js": "(location.href = '/404.html?nogl', true)", "wait": 1500 },
+    { "name": "404 still, link still goes home", "js": "[[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-6.webp')), document.querySelector('.orbit').getAttribute('href')]", "expect": [true, "/"] }
+  ]
+}

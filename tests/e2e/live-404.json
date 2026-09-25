@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/work/does-not-exist/",
+  "settle": 2500,
+  "noExternal": true,
+  "steps": [
+    { "name": "a missing nested path shows the styled lost-signal page", "js": "[document.querySelector('h1').getAttribute('aria-label'), getComputedStyle(document.body).fontFamily.startsWith('\"IBM Plex Mono\"'), !!document.querySelector('.stage canvas')]", "expect": ["Lost signal", true, true], "shot": "live-404.png" }
+  ]
+}

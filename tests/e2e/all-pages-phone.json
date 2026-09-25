@@ -1,0 +1,26 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "settle": 2000,
+  "ready": true,
+  "noExternal": true,
+  "steps": [
+    { "name": "home", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width, window.__stage.count]", "expect": [1, true, 65536] },
+    { "js": "(location.href = '/work/hunt/', true)", "wait": 1500 },
+    { "name": "hunt", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/work/voice-recorder/', true)", "wait": 1500 },
+    { "name": "voice recorder", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/work/lightning/', true)", "wait": 1500 },
+    { "name": "lightning", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/about/', true)", "wait": 1500 },
+    { "name": "about", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/timeline/', true)", "wait": 1500 },
+    { "name": "timeline", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/resume/', true)", "wait": 1500 },
+    { "name": "resume", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] },
+    { "js": "(location.href = '/404.html', true)", "wait": 1500 },
+    { "name": "404", "waitFor": "window.__stage && window.__stage.ready", "js": "[document.querySelectorAll('h1').length, document.documentElement.scrollWidth <= screen.width]", "expect": [1, true] }
+  ]
+}
