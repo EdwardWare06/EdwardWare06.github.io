@@ -10,6 +10,8 @@
     { "name": "the scene waits for a click", "js": "[!!document.querySelector('#storm-demo iframe'), document.querySelector('.demo-run').hidden]", "expect": [false, false], "shot": "lightning-demo-poster.png" },
     { "clickSel": ".demo-run", "waitFor": "(f => f && f.contentWindow.LBG && f.contentWindow.LBG.scene && f.contentWindow.LBG.scene.running)(document.querySelector('#storm-demo iframe'))", "timeout": 15000 },
     { "name": "the real scene runs in the frame", "js": "new Promise(r => setTimeout(() => r(document.querySelector('#storm-demo iframe').contentWindow.LBG.stats().fps > 20), 2000))", "expect": true },
+    { "name": "every strike so far is at least 0.5 s after the one before", "js": "(l => l.every((t, i) => i === 0 || t - l[i - 1] >= 0.5))(document.querySelector('#storm-demo iframe').contentWindow.__strikeLog)", "expect": true },
+    { "js": "(document.querySelector('#storm-demo iframe').contentWindow.LBG.config({ storm: { density: 0.0001 } }), true)", "wait": 4500 },
     { "clickSel": "#storm-demo iframe", "wait": 100 },
     { "clickSel": "#storm-demo iframe", "wait": 700 },
     { "name": "a click strikes; a second click within 0.5 s is ignored", "js": "document.querySelector('#storm-demo iframe').contentWindow.__strikes", "expect": 1, "shot": "lightning-strike.png" },
