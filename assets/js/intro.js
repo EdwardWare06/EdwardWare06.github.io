@@ -28,6 +28,9 @@ export function runIntro(stage, { flash = () => {} } = {}) {
   body.appendChild(el);
   const whiteout = el.querySelector('.intro-flash'), count = el.querySelector('.intro-count');
 
+  // On a reload the browser restores the old scroll position after load, which would show that section
+  // behind the intro. The intro starts at the top, so the browser does not restore it this time.
+  history.scrollRestoration = 'manual';
   scrollTo(0, 0);
   root.classList.add('intro-lock');
   body.classList.add('ih-name', 'ih-rest');
@@ -57,6 +60,7 @@ export function runIntro(stage, { flash = () => {} } = {}) {
     if (skipped) { stage.sing(0.035); stage.setForm(FORM.GALAXY); stage.sky(1, true); } else stage.sky(1);
     body.classList.remove('ih-name', 'ih-rest');
     root.classList.remove('intro-lock');
+    history.scrollRestoration = 'auto';
     removeEventListener('wheel', block);
     removeEventListener('touchmove', block);
     removeEventListener('keydown', block);

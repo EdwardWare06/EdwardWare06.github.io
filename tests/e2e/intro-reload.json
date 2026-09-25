@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/?intro",
+  "settle": 1500,
+  "ready": true,
+  "steps": [
+    { "key": "Escape", "wait": 700 },
+    { "js": "(document.querySelector('#contact').scrollIntoView(), scrollY > 500)", "expect": true, "wait": 500 },
+    { "js": "(location.reload(), true)", "wait": 3000 },
+    { "name": "a reload that replays the intro starts it at the top: the section you were on does not show", "js": "[!!document.querySelector('.intro:not(.out)'), Math.round(scrollY)]", "expect": [true, 0], "shot": "intro-reload.png" }
+  ]
+}
