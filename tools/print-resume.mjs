@@ -4,7 +4,7 @@ import { spawn } from 'node:child_process';
 import { writeFileSync, rmSync } from 'node:fs';
 
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const URL = 'http://localhost:8080/resume/';
+const URL = process.env.RESUME_URL || 'http://localhost:8080/resume/';
 const OUT = 'resume/Edward-Ware-Resume.pdf';
 const PHONE = /\(?\b\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b/;
 const STREET = /\b\d{1,5}\s+[NSEW]\.?\s+[A-Z][a-z]+\s+(Ave|St|Rd|Blvd|Dr|Ln)\b/;
@@ -35,13 +35,17 @@ const send = (method, params = {}) => new Promise(r => { const i = ++id; pending
 const evaluate = async expression => (await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })).result?.result?.value;
 
 await send('Page.enable');
-await send('Page.navigate', { url: URL });
+const nav = await send('Page.navigate', { url: URL });
+if (nav.result?.errorText) { console.log(`FAIL  could not load ${URL} (${nav.result.errorText}); is npm run serve running?`); await quit(1); }
 await sleep(2500);
 await evaluate('document.fonts.ready.then(() => true)');
+// only ever print the real resume page, never an error page
+if (!(await evaluate("!!document.querySelector('.resume') && document.querySelectorAll('.rs-item').length > 5"))) { console.log(`FAIL  ${URL} is not the resume page; not printing`); await quit(1); }
 const text = await evaluate('document.body.innerText');
 if (!text || PHONE.test(text) || STREET.test(text)) { console.log('FAIL  the resume page shows a phone number or a street address; not printing'); await quit(1); }
 
 const pdf = await send('Page.printToPDF', { printBackground: true, preferCSSPageSize: true, displayHeaderFooter: false });
+if (!pdf.result?.data) { console.log(`FAIL  printing failed: ${pdf.error?.message || 'no data'}`); await quit(1); }
 writeFileSync(OUT, Buffer.from(pdf.result.data, 'base64'));
 console.log(`wrote ${OUT}`);
 sock.close();

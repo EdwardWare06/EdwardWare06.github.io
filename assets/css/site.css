@@ -224,6 +224,7 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
 .rs-item li{margin:.25rem 0}
 .rs-skills{max-width:none}
 .rs-skills div{grid-template-columns:14ch 1fr}
+.resume-contact{margin:1.2rem 0 0;color:var(--soft)}
 
 @media print{
   @page{size:letter;margin:.5in .6in}
@@ -236,7 +237,7 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
   .ph-line{margin:4pt 0 0;font-size:9.5pt;color:#333}
   .panel{max-width:none;margin:0;padding:0;background:none!important;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
   .panel .fig{display:none}
-  .panel h2{font-size:12pt;margin:12pt 0 4pt;color:#111;text-shadow:none;letter-spacing:.06em}
+  .panel h2{font-size:12pt;margin:12pt 0 4pt;color:#111;text-shadow:none;letter-spacing:.06em;break-after:avoid}
   .resume section + section{margin-top:6pt}
   .rs-item{padding:5pt 0;border-top:.5pt solid #bbb;break-inside:avoid}
   .rs-item h3{font-size:10.5pt;color:#111}

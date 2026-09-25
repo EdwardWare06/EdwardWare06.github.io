@@ -8,6 +8,7 @@
     { "name": "dimmed nebula, centred behind the page", "js": "[window.__stage.form, window.__stage.s.offPin, window.__stage.s.dim]", "expect": [1, 0, 0.5], "shot": "resume-hero.png" },
     { "name": "five sections", "js": "[...document.querySelectorAll('.resume section')].map(s => s.dataset.section)", "expect": ["Education", "Experience", "Projects", "Skills", "Activities"] },
     { "name": "no phone number, no street address", "js": "[/\\(?\\b\\d{3}\\)?[-.\\s]\\d{3}[-.\\s]\\d{4}\\b/.test(document.body.innerText), /\\b\\d{1,5}\\s+[NSEW]\\.?\\s+[A-Z][a-z]+\\s+(Ave|St|Rd|Blvd|Dr|Ln)\\b/.test(document.body.innerText)]", "expect": [false, false] },
+    { "name": "email and GitHub show on screen", "js": "(e => !!e && e.checkVisibility() && !!e.querySelector('a[href=\"mailto:edwardware2006@gmail.com\"]') && !!e.querySelector('a[href=\"https://github.com/EdwardWare06\"]'))(document.querySelector('.resume-contact'))", "expect": true },
     { "name": "Hunt titles are in", "js": "document.querySelector('#experience').textContent.includes('Co-lead Developer & Designer, Maintenance Analytics')", "expect": true },
     { "name": "the PDF downloads", "js": "fetch(document.querySelector('.resume-actions a').getAttribute('href')).then(r => [r.ok, r.headers.get('content-type')])", "expect": [true, "application/pdf"] },
     { "scrollTo": "#experience", "wait": 500, "shot": "resume-experience.png" },

@@ -4,6 +4,7 @@
   "settle": 2500,
   "steps": [
     { "name": "print hides the site chrome", "js": "['.stage', '.nav', '.site-footer', '.page-hero'].map(s => getComputedStyle(document.querySelector(s)).display)", "expect": ["none", "none", "none", "none"] },
+    { "name": "print keeps each section heading with its first entry", "js": "[...document.querySelectorAll('.panel h2')].every(h => getComputedStyle(h).breakAfter === 'avoid')", "expect": true },
     { "name": "print shows the contact header on white", "js": "[getComputedStyle(document.querySelector('.print-head')).display, getComputedStyle(document.body).backgroundColor, document.querySelector('.print-head').textContent.includes('edwardware2006@gmail.com')]", "expect": ["block", "rgb(255, 255, 255)", true], "shot": "resume-print.png" }
   ]
 }
