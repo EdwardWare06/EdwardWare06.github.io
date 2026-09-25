@@ -3,3 +3,5 @@ tests/e2e/out/
 node_modules/
 *.pdf
 !resume/Edward-Ware-Resume.pdf
+# planning notes (spec, plans) stay local
+docs/superpowers/

@@ -9,7 +9,7 @@
     { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true },
     { "name": "four constellation cards", "js": "[...document.querySelectorAll('.ccard')].map(c => c.dataset.cons)", "expect": ["dipper", "lyra", "aquila", "hercules"] },
     { "name": "magnet buttons", "js": "[...document.querySelectorAll('[data-mag]')].map(b => b.textContent.trim())", "expect": ["RESUME ↓", "EMAIL ME →"] },
-    { "name": "no prices in the copy", "js": "!/\\$\\s?\\d/i.test(document.body.textContent)", "expect": true },
+    { "name": "no prices in the copy", "js": "!/\\$\\s?\\d/.test(document.body.textContent)", "expect": true },
     { "scrollTo": "#voice", "wait": 400, "shot": "home-voice-static.png" }
   ]
 }
