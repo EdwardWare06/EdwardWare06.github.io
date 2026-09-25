@@ -1,7 +1,10 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 2500,
+  "ready": true,
   "steps": [
+    { "name": "native cursor stays until the mouse moves", "js": "document.documentElement.classList.contains('cursor-on')", "expect": false },
+    { "mouse": [600, 420], "wait": 100 },
     { "name": "cursor effects on for a mouse", "js": "document.documentElement.classList.contains('cursor-on')", "expect": true },
     { "hover": ".nav a[href='/about/']", "wait": 500 },
     { "name": "ring orbits the nav link", "js": "window.__details.state.orbit", "expect": "ABOUT" },

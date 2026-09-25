@@ -21,7 +21,6 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
   else specs.forEach(s => s.el.addEventListener('click', () => { s.on = !s.on; }));
 
   const cursorOn = fine && !reduced;
-  if (cursorOn) document.documentElement.classList.add('cursor-on');
 
   // one fixed overlay canvas for dimension lines and the cursor
   const fx = document.createElement('canvas');
@@ -40,6 +39,8 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
   const release = m => { m.classList.remove('live'); m.style.transform = ''; m.firstElementChild.style.transform = ''; };
   if (cursorOn) {
     document.addEventListener('pointermove', e => {
+      // the native cursor hides only once the custom one has a position to draw at
+      if (!P.in) document.documentElement.classList.add('cursor-on');
       P.x = e.clientX; P.y = e.clientY; P.in = true;
       P.hot = !!e.target.closest?.('a, button, .spec');
       magEl = null;

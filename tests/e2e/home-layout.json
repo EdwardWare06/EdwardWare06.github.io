@@ -1,5 +1,6 @@
 {
   "url": "http://localhost:8080/?nointro",
+  "ready": true,
   "noExternal": true,
   "steps": [
     { "name": "six stage sections", "js": "[...document.querySelectorAll('[data-section]')].map(e => e.dataset.section)", "expect": ["Index", "Hunt / LaSalle", "Voice Recorder", "Lightning Background", "About", "Contact"] },

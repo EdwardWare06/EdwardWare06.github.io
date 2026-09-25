@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 3000,
+  "ready": true,
   "steps": [
     { "scrollTo": ".site-footer", "wait": 3500 },
     { "name": "at the bottom the stage shows the nebula", "js": "window.__stage.form", "expect": 1 },

@@ -7,6 +7,7 @@
     { "scrollTo": "#hunt", "wait": 1800 },
     { "name": "Hunt crossfades to the black hole still", "js": "[...document.querySelectorAll('.stage img')].some(i => i.src.endsWith('/form-2.webp') && i.style.opacity === '1')", "expect": true, "shot": "fallback-hunt.png" },
     { "name": "replay intro hidden without the stage", "js": "document.querySelector('.replay-intro').hidden", "expect": true },
+    { "mouse": [600, 420], "wait": 100 },
     { "name": "details still work", "js": "document.documentElement.classList.contains('cursor-on')", "expect": true }
   ]
 }

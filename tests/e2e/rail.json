@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 2000,
+  "ready": true,
   "steps": [
     { "name": "rail replaces the scrollbar", "js": "[!!document.querySelector('.rail'), document.documentElement.classList.contains('has-rail')]", "expect": [true, true] },
     { "name": "one tick per section", "js": "document.querySelectorAll('.rail-tick').length", "expect": 6 },

@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 3000,
+  "ready": true,
   "steps": [
     { "name": "desktop: stage offset free, full brightness, rail shown", "js": "[window.__stage.s.offPin, window.__stage.s.dim, getComputedStyle(document.querySelector('.rail')).display]", "expect": [null, 1, "block"] },
     { "viewport": [800, 1000], "wait": 400 },

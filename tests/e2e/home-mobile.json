@@ -1,5 +1,6 @@
 {
   "url": "http://localhost:8080/?nointro",
+  "ready": true,
   "viewport": [390, 844],
   "mobile": true,
   "touch": true,

@@ -2,6 +2,7 @@
   "url": "http://localhost:8080/",
   "media": { "prefers-reduced-motion": "reduce" },
   "settle": 2500,
+  "ready": true,
   "steps": [
     { "name": "no intro", "js": "!!document.querySelector('.intro')", "expect": false },
     { "name": "stage at quarter speed", "js": "window.__stage.s.speed", "expect": 0.25 },
