@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "viewport": [1200, 630],
+  "settle": 2000,
+  "ready": true,
+  "steps": [
+    { "js": "(document.querySelector('.rail')?.remove(), document.querySelector('.cue')?.remove(), true)", "wait": 3000, "shot": "og-galaxy.jpg" },
+    { "js": "(location.href = '/assets/img/favicon.svg', true)", "wait": 800 },
+    { "viewport": [180, 180], "js": "(document.documentElement.style.background = '#020308', true)", "wait": 300, "shot": "apple-touch-icon.png" }
+  ]
+}

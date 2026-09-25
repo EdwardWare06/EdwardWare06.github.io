@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /tests/
+Disallow: /tools/
+Disallow: /work/lightning/demo/
+Sitemap: https://edwardware06.github.io/sitemap.xml

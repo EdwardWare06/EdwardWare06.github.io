@@ -58,7 +58,7 @@ async function runSpec(file) {
   await send('Runtime.enable'); await send('Page.enable'); await send('Network.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: spec.dpr || 1, mobile: !!spec.mobile });
   if (spec.touch) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
-  if (spec.media) await send('Emulation.setEmulatedMedia', { features: Object.entries(spec.media).map(([name, value]) => ({ name, value })) });
+  if (spec.media || spec.mediaType) await send('Emulation.setEmulatedMedia', { media: spec.mediaType || '', features: Object.entries(spec.media || {}).map(([name, value]) => ({ name, value })) });
   if (spec.preload) await send('Page.addScriptToEvaluateOnNewDocument', { source: spec.preload });
   await send('Page.navigate', { url: spec.url });
   await sleep(spec.settle ?? 1500);
@@ -95,7 +95,8 @@ async function runSpec(file) {
     if (st.js) value = await evaluate(st.js, st.timeout);
     if (st.wait) await sleep(st.wait);
     if (st.shot) {
-      const s = await send('Page.captureScreenshot', { format: st.shot.endsWith('.webp') ? 'webp' : 'png', quality: st.shot.endsWith('.webp') ? 82 : undefined });
+      const fmt = st.shot.endsWith('.webp') ? 'webp' : st.shot.endsWith('.jpg') ? 'jpeg' : 'png';
+      const s = await send('Page.captureScreenshot', { format: fmt, quality: fmt === 'png' ? undefined : 82 });
       writeFileSync(`tests/e2e/out/${st.shot}`, Buffer.from(s.result.data, 'base64'));
     }
     if ('expect' in st) {
