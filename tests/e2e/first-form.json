@@ -1,0 +1,10 @@
+{
+  "url": "http://localhost:8080/work/voice-recorder/",
+  "settle": 3000,
+  "preload": "window.__flashLog = []; Object.defineProperty(window, '__stage', { configurable: true, get() { return this.__s; }, set(v) { const f = v.onFlash; v.onFlash = (ms, why) => { window.__flashLog.push(why); f(ms, why); }; this.__s = v; } });",
+  "steps": [
+    { "name": "project page opens on a settled pulsar, no form flash", "js": "[window.__flashLog.includes('form'), window.__stage.form, window.__stage.s.prev, window.__stage.s.t - window.__stage.s.sw > 2.6]", "expect": [false, 3, 3, true], "shot": "first-form-voice.png" },
+    { "js": "(location.href = '/#hunt', true)", "wait": 3000 },
+    { "name": "Home deep link opens on a settled black hole, no form flash", "js": "[window.__flashLog.includes('form'), window.__stage.form, window.__stage.s.prev, window.__stage.s.t - window.__stage.s.sw > 2.6]", "expect": [false, 2, 2, true], "shot": "first-form-hunt.png" }
+  ]
+}

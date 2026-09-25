@@ -56,7 +56,10 @@ function bootStage() {
 // Section under the middle of the window picks the form; the hero's scroll position moves the stage right.
 function wireMapping(target, mapping) {
   const secs = sections(), hero = document.querySelector('.hero');
-  let active = -1;
+  let active = -1, settling = true;
+  // Until the page has loaded (and the browser has jumped to any #anchor), forms appear already formed.
+  const settled = () => requestAnimationFrame(() => { settling = false; });
+  if (document.readyState === 'complete') settled(); else addEventListener('load', settled, { once: true });
   const update = () => {
     const vh = innerHeight;
     const idx = activeIndex(secs.map(el => el.getBoundingClientRect().top), vh);
@@ -64,7 +67,8 @@ function wireMapping(target, mapping) {
     if (idx !== active && !document.documentElement.classList.contains('intro-lock')) {
       active = idx;
       document.body.dataset.active = String(idx);
-      target.setForm(mapping[Math.min(idx, mapping.length - 1)]);
+      const f = mapping[Math.min(idx, mapping.length - 1)];
+      if (settling && target.snap) target.snap(f); else target.setForm(f); // no morph, no flash on arrival
     }
     if (target.layout && !env.mobile && hero) {
       const L = stageLayout(splitProgress(hero.getBoundingClientRect().bottom, vh));

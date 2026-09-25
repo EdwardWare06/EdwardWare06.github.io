@@ -10,6 +10,8 @@ const PULSAR_TILT = 1.1, PULSAR_SPIN = 1.8;
 const BASE_COUNT = 512 * 512;            // brightness is tuned for this many particles
 const SUN_VIEW = norm([-0.6, 0.45, -0.65]); // storm planet light, fixed to the camera
 
+// The pulsar's magnetic axis at time t (it spins around a tilted axis).
+function pulsarAxis(t) { return [Math.sin(PULSAR_TILT) * Math.cos(PULSAR_SPIN * t), Math.cos(PULSAR_TILT), Math.sin(PULSAR_TILT) * Math.sin(PULSAR_SPIN * t)]; }
 function norm(v) { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
 function randDir() { const z = Math.random() * 2 - 1, r = Math.sqrt(1 - z * z), a = Math.random() * Math.PI * 2; return [r * Math.cos(a), z, r * Math.sin(a)]; }
 // view rotation = Rx(pitch, looking down) * Ry(yaw), as rows
@@ -28,7 +30,8 @@ export class Stage {
       copy: program(gl, VSQ, COPY_FS), disp: program(gl, VSQ, DISPLAY_FS)
     };
     this.s = {
-      cur: FORM.GALAXY, prev: FORM.GALAXY, sw: -99, t: 0, yaw: 0.6, pyaw: 0.3,
+      // t starts at 12 s so the warm-up can settle on the times just before it, never below zero
+      cur: FORM.GALAXY, prev: FORM.GALAXY, sw: -99, t: 12, yaw: 0.6, pyaw: 0.3,
       off: 0.3, offT: 0.3, offPin: null, zoom: 1, zoomT: 1, sky: 1, skyT: 1, sing: 0.035, singT: 0.035,
       kick: 0, reset: false, dim: 1, speed: 1, cuts: false, reduced: false,
       pulseArmed: true, sflash: 0, nextFl: 0, nextBig: 0, cluster: [0, 0, 1], clusterN: 0, flI: 0
@@ -70,7 +73,7 @@ export class Stage {
     const s = this.s;
     s.prev = f; s.cur = f; s.sw = s.t - 10; s.reset = true;
     if (f === FORM.PLANET) s.pyaw = this._planetYaw();
-    if (this.ready) for (let k = 0; k < 150; k++) this._step(1 / 60, s.t, 1, 0, [0, 1, 0]);
+    if (this.ready) this._settle(150);
   }
   kick(v) { this.s.kick = v; }
   sky(a, now = false) { this.s.skyT = a; if (now) this.s.sky = a; }
@@ -140,17 +143,22 @@ export class Stage {
     if (this.ready && this.running) this._frame(0);
   }
 
+  // Run n update steps on the times leading up to now, so time-driven forms carry on smoothly afterwards.
+  _settle(n, upTo = this.s.t) {
+    for (let k = 0; k < n; k++) { const t = upTo - (n - k) / 60; this._step(1 / 60, t, 1, 0, pulsarAxis(t)); }
+  }
+
   // Settle the attractor and keep it as the "home" snapshot, then settle the current form.
   _warm() {
     const s = this.s, gl = this.gl, f0 = s.cur;
     s.cur = s.prev = FORM.ATTRACTOR;
-    for (let k = 0; k < 420; k++) this._step(1 / 60, k / 60, 1, 0, [0, 1, 0]);
+    this._settle(420, s.t - 240 / 60);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.HOMEF); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
     gl.useProgram(this.progs.copy.p);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(this.progs.copy.u.uS, 0);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     s.cur = s.prev = f0;
-    for (let k = 0; k < 240; k++) this._step(1 / 60, k / 60, 1, 0, [0, 1, 0]);
+    this._settle(240);
     // The passes above are only queued. Wait for the GPU to run them, so `ready` means the next frame is not stalled.
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.SF[this.si]);
     gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, new Float32Array(4));
@@ -235,7 +243,7 @@ export class Stage {
     const sun = [0, 1, 2].map(j => R[0][j] * SUN_VIEW[0] + R[1][j] * SUN_VIEW[1] + R[2][j] * SUN_VIEW[2]);
 
     // pulsar: a pulse when a beam points at the camera
-    const mag = [Math.sin(PULSAR_TILT) * Math.cos(PULSAR_SPIN * t), Math.cos(PULSAR_TILT), Math.sin(PULSAR_TILT) * Math.sin(PULSAR_SPIN * t)];
+    const mag = pulsarAxis(t);
     const cosang = -(mag[0] * fwd[0] + mag[1] * fwd[1] + mag[2] * fwd[2]);
     let pulse = Math.max(0, Math.min(1, (cosang - 0.93) / 0.065)) * w[FORM.PULSAR];
     if (pulse > 0.55 && s.pulseArmed) { s.pulseArmed = false; if (!s.reduced) this.onFlash(140, 'pulsar'); }
