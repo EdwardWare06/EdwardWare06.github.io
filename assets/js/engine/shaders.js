@@ -12,6 +12,8 @@ const float TL=.42;
 vec3 tiltW(vec3 v){float c=cos(TL),s=sin(TL);return vec3(v.x,v.y*c-v.z*s,v.y*s+v.z*c);}
 vec3 tiltL(vec3 v){float c=cos(TL),s=sin(TL);return vec3(v.x,v.y*c+v.z*s,-v.y*s+v.z*c);}
 float ringA(vec4 h){return 1.35+h.y*.6;}
+// black hole: each particle keeps its own orbit, most of them close to the shadow
+float diskR(vec4 h){return .26+2.34*pow(h.y,1.5);}
 // brain: hemisphere centres and radii
 const vec3 BR=vec3(.5,.64,1.);
 vec3 bctr(float sd){return vec3(sd*.28,.06,0.);}
@@ -44,7 +46,7 @@ vec3 field(int f,vec3 p,vec3 v,vec4 h,ivec2 id){
   if(f==0)return (texelFetch(uBrain,id,0).xyz*(1.+.01*sin(uT*1.3))-p)*7.;
   if(f==1){vec2 q=p.xz*.75;vec2 c=curl(q,uT*.04)+.45*curl(q*2.6+9.,uT*.07)+vec2(.55,0.);vec3 fl=vec3(c.x*.2,(sheetY(p.xz,uT)-p.y)*3.,c.y*.2);
     vec3 hm=vec3((h.y*2.-1.)*2.4,0.,(h.z*2.-1.)*1.8);hm.y=sheetY(hm.xz,uT);float settle=uF1==1?smoothstep(.85,1.,uMix):1.;return mix((hm-p)*6.,fl,settle);}
-  if(f==2){float r=max(length(p.xz),.05);vec3 tn=vec3(-p.z,0.,p.x)/r;vec3 rn=vec3(p.x,0.,p.z)/r;float vk=.95/sqrt(max(r,.25));float inflow=.03+.045/r;float hy=(h.z-.5)*.05*r;return tn*vk-rn*inflow+vec3(0.,(hy-p.y)*4.,0.);}
+  if(f==2){float r=max(length(p.xz),.05);vec3 tn=vec3(-p.z,0.,p.x)/r;vec3 rn=vec3(p.x,0.,p.z)/r;float vk=.95/sqrt(max(r,.25));float hy=(h.z-.5)*.05*r;return tn*vk+rn*(diskR(h)-r)*1.2+vec3(0.,(hy-p.y)*4.,0.);}
   if(f==3){
     vec3 m=uM;
     if(h.x<.08){vec3 tg=rdir(h.y,h.z)*.07;return (tg-p)*10.;}
@@ -86,7 +88,7 @@ void main(){ivec2 id=ivec2(gl_FragCoord.xy);vec4 P=texelFetch(uP,id,0),V=texelFe
   p+=v*uDt;
   if(uMix>.99){
     if(uF1==1){if(abs(p.x)>2.6||abs(p.z)>2.||age>3.+h.w*6.){vec2 r2=vec2(hash(vec2(id)+fract(uT)*5.),hash(vec2(id)*.7+fract(uT)*3.));p.xz=(r2*2.-1.)*vec2(2.6,2.);if(hash(vec2(id)*1.9+fract(uT))<.3)p.x=-2.6+r2.x*.3;p.y=sheetY(p.xz,uT);age=0.;pw=uT;}}
-    if(uF1==2){float r=length(p.xz);if(r<.26||r>4.){float rr=.9+h.y*1.7;float an=hash(vec2(id)+fract(uT)*91.)*6.2831853;p=vec3(cos(an)*rr,(h.z-.5)*.03*rr,sin(an)*rr);v=vec3(-sin(an),0.,cos(an))*.95/sqrt(rr);age=0.;pw=uT;}}
+    if(uF1==2){float r=length(p.xz);if(r>4.){float rr=diskR(h);float an=hash(vec2(id)+fract(uT)*91.)*6.2831853;p=vec3(cos(an)*rr,(h.z-.5)*.03*rr,sin(an)*rr);v=vec3(-sin(an),0.,cos(an))*.95/sqrt(rr);age=0.;pw=uT;}}
     if(uF1==5&&h.x>=.22&&age>6.+h.w*8.){p=tiltW(rdir(hash(vec2(id)+fract(uT)*17.),hash(vec2(id)*.9+fract(uT)*29.))*.95);v=vec3(0.);age=0.;pw=uT;}
   }
   if(beam&&(age>h.y*.5+.35||length(p)>3.5)){float sg=h.z<.5?-1.:1.;vec3 d=normalize(uM*sg+rdir(hash(vec2(id)+fract(uT)*13.),hash(vec2(id)*1.3+fract(uT)*7.))*.035);p=d*(.08+hash(vec2(id)*2.3+fract(uT)*11.)*.3);v=d*4.;age=0.;pw=uT;}
@@ -122,7 +124,7 @@ void main(){ivec2 id=ivec2(gl_VertexID%uW,gl_VertexID/uW);vec4 P=texelFetch(uP,i
   vec2 s=q.xy/z*uFoc;float amp=1.;
   // first image: the far side is pushed outward, over the shadow; second image: a thin ring on the shadow's edge, on the opposite side
   if(uLens>.01){float b=length(s)+1e-5;float TH=uThE*uLens;
-    if(uImg==0){if(q.z>0.){float th=TH*sqrt(clamp(q.z/.4,0.,1.));s*=((b+sqrt(b*b+4.*th*th))*.5)/b;}}
+    if(uImg==0){float th=TH*smoothstep(-.15,.4,q.z);s*=((b+sqrt(b*b+4.*th*th))*.5)/b;}
     else{float u=(sqrt(b*b+4.*TH*TH)-b)*.5/TH;s*=-TH*(.84+.1*u)/b;amp=.45*u*sqrt(clamp(abs(q.z)/.4,0.,1.))*(q.z>0.?1.:.15);}}
   vec3 c=mix(colF(uF0,p,v,h),colF(uF1,p,v,h),uMix);
   float dep=smoothstep(uDist+3.,uDist-2.,z);

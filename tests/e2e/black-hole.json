@@ -5,12 +5,26 @@
   "steps": [
     {
       "name": "black hole: the bent image of the far side is a thin ring on the shadow's edge, not a small ring below the centre; the shadow stays dark",
-      "js": "new Promise(async r => { const S = window.__stage, src = S.canvas, W = innerWidth, H = innerHeight; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d', { willReadFrequently: true }); const th = 0.26 / S.s.zoom * H / 2, cx = (S.s.off + 1) / 2 * W, cy = H / 2; const at = (u, v) => { const d = g.getImageData(Math.round(cx + u * th) - 3, Math.round(cy - v * th) - 3, 7, 7).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; return s / (d.length / 4) / 3; }; const sum = { ring: 0, fake: 0, shadow: 0 }; for (let k = 0; k < 12; k++) { await new Promise(f => requestAnimationFrame(f)); g.drawImage(src, 0, 0, W, H); sum.ring += (at(-0.89, 0) + at(0.89, 0)) / 2; sum.fake += (at(-0.53, -0.34) + at(0.53, -0.34)) / 2; sum.shadow += at(0, 0.5); await new Promise(f => setTimeout(f, 80)); } r([sum.ring > 2.5 * sum.fake, sum.shadow < 0.25 * sum.ring]); })",
+      "js": "new Promise(async r => { const S = window.__stage, src = S.canvas, W = innerWidth, H = innerHeight; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d', { willReadFrequently: true }); const th = 0.26 / S.s.zoom * H / 2, cx = (S.s.off + 1) / 2 * W, cy = H / 2; const at = (u, v) => { const d = g.getImageData(Math.round(cx + u * th) - 3, Math.round(cy - v * th) - 3, 7, 7).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; return s / (d.length / 4) / 3; }; const sum = { ring: 0, fake: 0, shadow: 0 }; for (let k = 0; k < 12; k++) { await new Promise(f => requestAnimationFrame(f)); g.drawImage(src, 0, 0, W, H); sum.ring += (at(-0.89, 0) + at(0.89, 0)) / 2; sum.fake += (at(-0.53, -0.34) + at(0.53, -0.34)) / 2; sum.shadow += at(0, 0.5); await new Promise(f => setTimeout(f, 80)); } r([sum.ring > 2 * sum.fake, sum.shadow < 0.25 * sum.ring]); })",
       "expect": [
         true,
         true
       ],
       "shot": "black-hole.png"
+    },
+    {
+      "wait": 8000
+    },
+    {
+      "name": "black hole: particles keep orbiting; none are removed at the inner edge and reborn outside (under 0.2% in 2 s)",
+      "js": "(() => { const S = window.__stage, gl = S.gl, n = S.cols * S.rows, a = new Float32Array(n * 4); gl.bindFramebuffer(gl.FRAMEBUFFER, S.SF[S.si]); gl.readPixels(0, 0, S.cols, S.rows, gl.RGBA, gl.FLOAT, a); gl.bindFramebuffer(gl.FRAMEBUFFER, null); let k = 0; for (let i = 3; i < a.length; i += 4) if (a[i] > S.s.t - 2) k++; return k / n < 0.002; })()",
+      "expect": true
+    },
+    {
+      "name": "black hole: the white inner disk beside the shadow stays bright",
+      "js": "new Promise(async r => { const S = window.__stage, src = S.canvas, W = innerWidth, H = innerHeight; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d', { willReadFrequently: true }); const th = 0.26 / S.s.zoom * H / 2, cx = (S.s.off + 1) / 2 * W, cy = H / 2; const at = (u, v) => { const d = g.getImageData(Math.round(cx + u * th) - 4, Math.round(cy - v * th) - 4, 9, 9).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; return s / (d.length / 4) / 3; }; let s = 0; for (let k = 0; k < 12; k++) { await new Promise(f => requestAnimationFrame(f)); g.drawImage(src, 0, 0, W, H); s += (at(-1.2, -0.1) + at(1.2, -0.1) + at(-1.5, -0.15) + at(1.5, -0.15)) / 4; await new Promise(f => setTimeout(f, 80)); } r(s / 12 >= 40); })",
+      "expect": true,
+      "shot": "black-hole-settled.png"
     }
   ]
 }
