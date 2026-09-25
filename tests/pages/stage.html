@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>stage test</title>
+<style>html,body{margin:0;height:100%;background:#000}canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import { Stage } from '/assets/js/engine/stage.js';
+const q = new URLSearchParams(location.search);
+const stage = new Stage(document.getElementById('c'), { tier: q.get('tier') || 'high' });
+stage.pinOffset(Number(q.get('off') ?? 0));
+stage.snap(Number(q.get('form') ?? 4));
+stage.start();
+window.__stage = stage;
+</script>
+</body>
+</html>

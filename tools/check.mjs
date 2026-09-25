@@ -1,7 +1,7 @@
 // Browser checks over the Chrome DevTools protocol, on the real GPU. Dev tool, never linked from the site.
 // usage (from WSL): npm run e2e -- tests/e2e/<name>.json [more.json ...]
 import { spawn } from 'node:child_process';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -12,9 +12,9 @@ async function runSpec(file) {
   const spec = JSON.parse(readFileSync(file, 'utf8'));
   const [W, H] = spec.viewport || [1300, 1000];
   const port = 9400 + Math.floor(Math.random() * 500);
+  const profile = `${process.env.TEMP || 'C:\\Windows\\Temp'}\\ew-e2e-${port}`;
   const chrome = spawn(CHROME, [
-    '--headless=new', `--remote-debugging-port=${port}`,
-    `--user-data-dir=${process.env.TEMP || 'C:\\Windows\\Temp'}\\ew-e2e-${port}`,
+    '--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`,
     `--window-size=${W},${H}`, '--enable-gpu', '--ignore-gpu-blocklist', '--use-angle=d3d11', 'about:blank'
   ], { stdio: 'ignore' });
 
@@ -26,7 +26,12 @@ async function runSpec(file) {
     } catch {}
     if (!wsUrl) await sleep(200);
   }
-  if (!wsUrl) { chrome.kill(); console.log('FAIL  no DevTools target'); return 1; }
+  // Chrome writes a throwaway profile per run; remove it once Chrome has exited.
+  const quit = async () => {
+    if (chrome.exitCode === null) { const exited = new Promise(r => chrome.once('exit', r)); chrome.kill(); await exited; }
+    for (let i = 0; i < 10; i++) { try { rmSync(profile, { recursive: true, force: true }); return; } catch { await sleep(300); } }
+  };
+  if (!wsUrl) { await quit(); console.log('FAIL  no DevTools target'); return 1; }
 
   const sock = new WebSocket(wsUrl);
   await new Promise(r => (sock.onopen = r));
@@ -40,8 +45,11 @@ async function runSpec(file) {
     if (m.method === 'Network.requestWillBeSent') requests.push(m.params.request.url);
   };
   const send = (method, params = {}) => new Promise(r => { const i = ++id; pending.set(i, r); sock.send(JSON.stringify({ id: i, method, params })); });
-  const evaluate = async expression => {
-    const r = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
+  const evaluate = async (expression, timeout = 60000) => {
+    const r = await Promise.race([
+      send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }),
+      sleep(timeout).then(() => ({ result: { exceptionDetails: { text: `timed out after ${timeout} ms` } } }))
+    ]);
     if (r.result?.exceptionDetails) return { __error: r.result.exceptionDetails.exception?.description || r.result.exceptionDetails.text };
     return r.result?.result?.value;
   };
@@ -75,7 +83,7 @@ async function runSpec(file) {
     if (st.wheel) await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: st.wheel[0], y: st.wheel[1], deltaX: 0, deltaY: st.wheel[2] });
     if (st.key) for (const type of ['rawKeyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: st.key, code: st.key === ' ' ? 'Space' : st.key, windowsVirtualKeyCode: KEYCODES[st.key] || 0 });
     let value;
-    if (st.js) value = await evaluate(st.js);
+    if (st.js) value = await evaluate(st.js, st.timeout);
     if (st.wait) await sleep(st.wait);
     if (st.shot) {
       const s = await send('Page.captureScreenshot', { format: st.shot.endsWith('.webp') ? 'webp' : 'png', quality: st.shot.endsWith('.webp') ? 82 : undefined });
@@ -92,7 +100,7 @@ async function runSpec(file) {
     const ext = requests.filter(u => !LOCAL.test(u));
     if (ext.length) { failed++; console.log(`FAIL  external requests:\n  ${ext.join('\n  ')}`); }
   }
-  sock.close(); chrome.kill();
+  sock.close(); await quit();
   return failed;
 }
 

@@ -1,0 +1,17 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=4",
+  "settle": 3000,
+  "steps": [
+    { "name": "galaxy after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 40000))", "expect": true, "shot": "soak-4.png" },
+    { "js": "window.__stage.setForm(2)" },
+    { "name": "black hole after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 42600))", "expect": true, "shot": "soak-2.png" },
+    { "js": "window.__stage.setForm(3)" },
+    { "name": "pulsar after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 42600))", "expect": true, "shot": "soak-3.png" },
+    { "js": "window.__stage.setForm(0)" },
+    { "name": "attractor after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 42600))", "expect": true, "shot": "soak-0.png" },
+    { "js": "window.__stage.setForm(1)" },
+    { "name": "nebula after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 42600))", "expect": true, "shot": "soak-1.png" },
+    { "js": "window.__stage.setForm(6)" },
+    { "name": "singularity after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 42600))", "expect": true, "shot": "soak-6.png" }
+  ]
+}

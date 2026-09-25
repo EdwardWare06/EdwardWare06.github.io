@@ -1,0 +1,26 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=4",
+  "settle": 3000,
+  "steps": [
+    {"name": "warm-up finished", "js": "window.__stage.ready", "expect": true},
+    {"name": "desktop particle count", "js": "window.__stage.count", "expect": 262144},
+    {"name": "galaxy renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-4-galaxy.png"},
+    {"name": "a late frame timestamp never rewinds time", "js": "(st => { const t0 = st.s.t; st._last = performance.now() + 300; return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(st.s.t >= t0)))); })(window.__stage)", "expect": true, "wait": 1500},
+    {"name": "no blow-out after a late frame timestamp", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 0.1)(window.__stage.debugLuma())", "expect": true, "shot": "form-4-after-late-frame.png"},
+    {"js": "window.__stage.setForm(2)", "wait": 800},
+    {"name": "resize mid-transition", "viewport": [900, 700], "wait": 1500},
+    {"name": "black hole survives the resize", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-2-black-hole-resized.png"},
+    {"viewport": [1300, 1000], "js": "window.__stage.setForm(3)", "wait": 4000},
+    {"name": "pulsar renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-3-pulsar.png"},
+    {"js": "window.__stage.setForm(0)", "wait": 4500},
+    {"name": "attractor renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-0-attractor.png"},
+    {"js": "window.__stage.setForm(1)", "wait": 5000},
+    {"name": "nebula renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-1-nebula.png"},
+    {"js": "window.__stage.setForm(6)", "wait": 3000},
+    {"name": "singularity renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-6-singularity.png"},
+    {"js": "window.__stage.setForm(5)", "wait": 4000, "shot": "form-5-planet-4s.png"},
+    {"name": "planet still healthy after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 36000))", "expect": true, "shot": "form-5-planet-40s.png"},
+    {"name": "low tier halves the particles", "js": "(window.__stage.setTier('low'), window.__stage.count)", "expect": 131072, "wait": 2500},
+    {"name": "low tier renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true}
+  ]
+}
