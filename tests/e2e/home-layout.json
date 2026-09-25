@@ -1,0 +1,15 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "noExternal": true,
+  "steps": [
+    { "name": "six stage sections", "js": "[...document.querySelectorAll('[data-section]')].map(e => e.dataset.section)", "expect": ["Index", "Hunt / LaSalle", "Voice Recorder", "Lightning Background", "About", "Contact"] },
+    { "name": "one h1, five h2", "js": "[document.querySelectorAll('h1').length, document.querySelectorAll('h2').length]", "expect": [1, 5] },
+    { "name": "text column is 44 %", "js": "Math.round(document.querySelector('.col').getBoundingClientRect().width / document.documentElement.clientWidth * 100)", "expect": 44 },
+    { "name": "each section fills the window", "js": "[...document.querySelectorAll('.sec')].every(s => s.getBoundingClientRect().height >= innerHeight - 1)", "expect": true },
+    { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true },
+    { "name": "four constellation cards", "js": "[...document.querySelectorAll('.ccard')].map(c => c.dataset.cons)", "expect": ["dipper", "lyra", "aquila", "hercules"] },
+    { "name": "magnet buttons", "js": "[...document.querySelectorAll('[data-mag]')].map(b => b.textContent.trim())", "expect": ["RESUME ↓", "EMAIL ME →"] },
+    { "name": "no prices in the copy", "js": "!/\\$\\s?\\d/i.test(document.body.textContent)", "expect": true },
+    { "scrollTo": "#voice", "wait": 400, "shot": "home-voice-static.png" }
+  ]
+}

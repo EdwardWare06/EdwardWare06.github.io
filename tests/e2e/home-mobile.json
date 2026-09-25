@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "steps": [
+    { "name": "split stacks", "js": "getComputedStyle(document.querySelector('.split')).display", "expect": "block" },
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true },
+    { "name": "name fits the width", "js": "document.querySelector('.name').getBoundingClientRect().right <= innerWidth", "expect": true },
+    { "shot": "home-mobile-hero.png" },
+    { "scrollTo": "#hunt", "wait": 300, "shot": "home-mobile-hunt.png" }
+  ]
+}

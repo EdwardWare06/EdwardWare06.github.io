@@ -62,3 +62,37 @@ main,.site-footer{position:relative;z-index:1}
 .site-footer{padding:2.4rem var(--gutter);border-top:1px solid var(--line);background:var(--panel);color:var(--dim)}
 .site-footer button{font:inherit;letter-spacing:inherit;color:var(--soft);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
 .site-footer button:hover{color:var(--ink)}
+
+/* ---------- split: text column left, stage visible on the right ---------- */
+.split{display:grid;grid-template-columns:44% 56%}
+.col{background:var(--panel);background-image:linear-gradient(rgba(120,150,210,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,210,.05) 1px,transparent 1px);background-size:2vw 2vw;border-right:1px solid var(--line);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sec{min-height:100vh;padding:12vh var(--gutter) 8vh;border-top:1px solid rgba(140,170,230,.14);display:flex;flex-direction:column;justify-content:center}
+.sec .fig{color:var(--lime);margin:0}
+.sec h2{font-size:clamp(1.8rem,3.3vw,3.4rem);line-height:1;margin:1.1rem 0 1.4rem}
+.sec p{max-width:46ch;margin:0 0 1.6rem}
+.spec{display:grid;gap:.45rem;margin:0 0 .4rem;font:500 .8rem/1.5 var(--mono);max-width:52ch;cursor:default}
+.spec div{display:grid;grid-template-columns:11ch 1fr;border-top:1px dashed rgba(140,170,230,.25);padding-top:.45rem}
+.spec dt{color:#71819f;letter-spacing:.1em}
+.spec dd{margin:0;color:var(--ink)}
+.dec{text-decoration:none;border-bottom:1px dotted rgba(159,180,214,.45)}
+.dec:hover,.dec:focus-visible{color:var(--ink);border-bottom-color:var(--lime)}
+
+/* ---------- constellation card ---------- */
+.ccard{position:relative;display:block;margin-top:2rem;max-width:46ch;aspect-ratio:3.1/1;border:1px solid rgba(140,170,230,.22);border-radius:6px;background:rgba(6,9,18,.7);overflow:hidden;text-decoration:none;transition:border-color .3s}
+.ccard:hover,.ccard:focus-visible{border-color:rgba(140,170,230,.45)}
+.ccard canvas{position:absolute;inset:0;width:100%;height:100%}
+.cc-k,.cc-t,.cc-n{position:absolute}
+.cc-k{left:1.1rem;top:.9rem;font:500 .66rem var(--mono);letter-spacing:.16em;color:var(--lime)}
+.cc-t{left:1.1rem;bottom:.9rem;font-family:var(--display);font-weight:700;font-variation-settings:'wdth' 125,'wght' 700;text-transform:uppercase;font-size:.95rem;color:var(--ink)}
+.cc-n{right:1rem;top:.9rem;font:500 .6rem var(--mono);letter-spacing:.14em;color:#8fa3c4;opacity:0;transform:translateY(-3px);transition:opacity .5s .3s,transform .5s .3s}
+.ccard:hover .cc-n,.ccard:focus-visible .cc-n,.ccard.on .cc-n{opacity:1;transform:none}
+
+/* ---------- tablet and phone: stage behind, full-width panels ---------- */
+@media (max-width:1023px){
+  .split{display:block}
+  .split-stage{display:none}
+  .col{background:rgba(3,5,11,.78);border-right:0;background-size:24px 24px}
+  .sec{min-height:auto;padding:14vh var(--gutter) 10vh}
+  .name{font-size:clamp(2.6rem,13vw,5.2rem)}
+  .nav{gap:14px;font-size:.68rem}
+}
