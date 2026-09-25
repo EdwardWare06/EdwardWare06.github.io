@@ -1,0 +1,14 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "steps": [
+    { "name": "no custom cursor on touch", "js": "document.documentElement.classList.contains('cursor-on')", "expect": false },
+    { "scrollTo": "#voice", "wait": 600 },
+    { "clickSel": "#voice .spec", "wait": 600 },
+    { "name": "tap shows the dimension lines", "js": "window.__details.state.dims", "expect": 1 },
+    { "scrollTo": "#voice .ccard", "wait": 1200 },
+    { "name": "card in view joins its constellation", "js": "window.__details.state.cards >= 1", "expect": true, "shot": "details-touch.png" }
+  ]
+}

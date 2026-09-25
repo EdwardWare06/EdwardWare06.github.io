@@ -96,3 +96,7 @@ main,.site-footer{position:relative;z-index:1}
   .name{font-size:clamp(2.6rem,13vw,5.2rem)}
   .nav{gap:14px;font-size:.68rem}
 }
+
+/* ---------- details overlay (dimension lines, comet cursor) ---------- */
+.fx-overlay{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:40}
+html.cursor-on,html.cursor-on *{cursor:none!important}

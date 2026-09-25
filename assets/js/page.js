@@ -4,6 +4,8 @@ import { stageSupported } from './engine/gl.js';
 import { HOME_MAPPING, formFromName } from './engine/forms.js';
 import { initialTier } from './engine/quality.js';
 import { activeIndex, splitProgress, stageLayout } from './scroll-map.js';
+import { initDetails } from './details.js';
+import { TAIL_RGB } from './engine/forms.js';
 
 const params = new URLSearchParams(location.search);
 export const env = {
@@ -103,6 +105,7 @@ function main() {
   const stage = bootStage();
   if (stage) wireMapping(stage, pageMapping());
   wireNameSwell();
+  initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[stage ? stage.form : 4] });
 }
 
 main();

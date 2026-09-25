@@ -1,0 +1,23 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 2500,
+  "steps": [
+    { "name": "cursor effects on for a mouse", "js": "document.documentElement.classList.contains('cursor-on')", "expect": true },
+    { "hover": ".nav a[href='/about/']", "wait": 500 },
+    { "name": "ring orbits the nav link", "js": "window.__details.state.orbit", "expect": "ABOUT" },
+    { "name": "label decodes back to text", "js": "document.querySelector(\".nav a[href='/about/']\").textContent", "expect": "ABOUT", "shot": "details-orbit.png" },
+    { "hover": ".cta [data-mag]", "offset": [40, -12], "wait": 350 },
+    { "name": "magnet leans toward the cursor", "js": "new DOMMatrix(getComputedStyle(document.querySelector('.cta [data-mag]')).transform).m41 > 1", "expect": true },
+    { "name": "ring wraps the button", "js": "window.__details.state.mag", "expect": true, "shot": "details-magnet.png" },
+    { "scrollTo": "#voice", "wait": 600 },
+    { "hover": "#voice .spec", "wait": 700 },
+    { "name": "dimension lines on the spec block", "js": "window.__details.state.dims", "expect": 1, "shot": "details-dimensions.png" },
+    { "hover": "#voice .ccard", "wait": 1100 },
+    { "name": "constellation joins on hover", "js": "window.__details.state.cards", "expect": 1 },
+    { "name": "constellation name fades in", "js": "Number(getComputedStyle(document.querySelector('#voice .cc-n')).opacity) > 0.9", "expect": true, "shot": "details-constellation.png" },
+    { "js": "(window.scrollTo(0, 0), document.querySelector('.skip-link').focus(), true)", "wait": 200 },
+    { "key": "Tab" },
+    { "key": "Tab", "wait": 450 },
+    { "name": "keyboard focus: WORK with a visible ring, decoded", "js": "[document.activeElement.textContent, getComputedStyle(document.activeElement).outlineStyle]", "expect": ["WORK", "solid"] }
+  ]
+}
