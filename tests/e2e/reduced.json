@@ -1,0 +1,15 @@
+{
+  "url": "http://localhost:8080/",
+  "media": { "prefers-reduced-motion": "reduce" },
+  "settle": 2500,
+  "steps": [
+    { "name": "no intro", "js": "!!document.querySelector('.intro')", "expect": false },
+    { "name": "stage at quarter speed", "js": "window.__stage.s.speed", "expect": 0.25 },
+    { "name": "no custom cursor", "js": "document.documentElement.classList.contains('cursor-on')", "expect": false },
+    { "scrollTo": "#voice", "wait": 400 },
+    { "name": "forms cut instead of morphing", "js": "[window.__stage.form, window.__stage.s.prev]", "expect": [3, 3], "shot": "reduced-voice.png" },
+    { "name": "no name flashes", "js": "document.body.dataset.flashes || '0'", "expect": "0" },
+    { "hover": ".nav a[href='/timeline/']", "wait": 60 },
+    { "name": "decode shows text at once", "js": "document.querySelector(\".nav a[href='/timeline/']\").textContent", "expect": "TIMELINE" }
+  ]
+}

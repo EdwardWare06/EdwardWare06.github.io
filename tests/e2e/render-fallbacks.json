@@ -1,0 +1,14 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=4&off=0.3",
+  "viewport": [1600, 1000],
+  "settle": 4500,
+  "steps": [
+    { "shot": "form-4.webp" },
+    { "js": "window.__stage.setForm(2)", "wait": 4500, "shot": "form-2.webp" },
+    { "js": "window.__stage.setForm(3)", "wait": 4500, "shot": "form-3.webp" },
+    { "js": "window.__stage.setForm(5)", "wait": 5000, "shot": "form-5.webp" },
+    { "js": "window.__stage.setForm(0)", "wait": 15000, "shot": "form-0.webp" },
+    { "js": "window.__stage.setForm(1)", "wait": 6000, "shot": "form-1.webp" },
+    { "js": "window.__stage.setForm(6)", "wait": 3000, "shot": "form-6.webp" }
+  ]
+}

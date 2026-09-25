@@ -2,7 +2,7 @@
 import { Stage } from './engine/stage.js';
 import { stageSupported } from './engine/gl.js';
 import { HOME_MAPPING, formFromName } from './engine/forms.js';
-import { initialTier } from './engine/quality.js';
+import { initialTier, nextTier } from './engine/quality.js';
 import { activeIndex, splitProgress, stageLayout } from './scroll-map.js';
 import { initDetails } from './details.js';
 import { initRail } from './rail.js';
@@ -103,6 +103,39 @@ function pageMapping() {
   return document.body.dataset.page === 'home' ? HOME_MAPPING : [formFromName(document.body.dataset.form || 'galaxy')];
 }
 
+// During the first seconds, step the quality down if frames are slow (resolution first, then particles).
+function watchQuality(stage) {
+  if (env.tier || stage.tier === 'mobile') return; // a forced tier stays put
+  let tries = 0;
+  const check = () => {
+    const next = nextTier(stage.tier, stage.frameMs());
+    if (next === stage.tier) return;
+    stage.setTier(next);
+    stage.meter.reset();
+    if (++tries < 3) setTimeout(check, 2500);
+  };
+  setTimeout(() => { stage.meter.reset(); setTimeout(check, 2000); }, 1000);
+}
+
+// No WebGL2: crossfade pre-rendered stills of each form.
+function bootFallback() {
+  const host = document.querySelector('.stage');
+  if (!host) return null;
+  host.classList.add('no-gl');
+  const imgs = [0, 1].map(() => { const img = document.createElement('img'); img.alt = ''; img.decoding = 'async'; host.appendChild(img); return img; });
+  let front = 0, form = -1;
+  return {
+    get form() { return form; },
+    setForm(f) {
+      if (f === form) return;
+      form = f;
+      const back = imgs[1 - front];
+      back.onload = () => { back.style.opacity = '1'; imgs[front].style.opacity = '0'; front = 1 - front; };
+      back.src = `/assets/img/fallback/form-${f}.webp`;
+    }
+  };
+}
+
 // Home only: the intro on the first visit per session, and the footer's "Replay intro".
 function wireIntro(stage) {
   const replay = document.querySelector('.replay-intro');
@@ -116,9 +149,11 @@ function wireIntro(stage) {
 
 function main() {
   const stage = bootStage();
-  if (stage) wireMapping(stage, pageMapping());
+  const target = stage || bootFallback();
+  if (target) wireMapping(target, pageMapping());
+  if (stage) watchQuality(stage);
   wireNameSwell();
-  initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[stage ? stage.form : 4] });
+  initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[target && target.form >= 0 ? target.form : 4] });
   initRail({ enabled: env.fine && !env.mobile });
   wireIntro(stage);
 }

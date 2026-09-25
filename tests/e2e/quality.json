@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/?nointro&tier=low",
+  "settle": 2500,
+  "steps": [
+    { "name": "forced low tier", "js": "[window.__stage.tier, window.__stage.count]", "expect": ["low", 131072] },
+    { "name": "low tier renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "quality-low.png" }
+  ]
+}

@@ -130,3 +130,13 @@ body.ih-rest :is(.nav,.kicker,.lede,.cta,.cue,.rail){opacity:0;transition:none}
 :is(.kicker,.lede,.cta,.cue,.rail){transition:opacity .9s}
 .nav{transition:opacity .9s .15s}
 .kicker{transition-delay:.05s}.lede{transition-delay:.25s}.cta{transition-delay:.45s}.cue{transition-delay:.7s}
+
+/* ---------- no-WebGL fallback ---------- */
+.stage.no-gl canvas{display:none}
+@media (max-width:1023px){.stage img{filter:brightness(.7)}}
+
+/* ---------- reduce motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .btn,.btn span,.nav a::after,.cc-n,.display,.stage img{transition:none!important}
+}
