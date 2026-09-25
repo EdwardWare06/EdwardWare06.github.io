@@ -1,0 +1,20 @@
+{
+  "url": "http://localhost:8080/timeline/",
+  "settle": 2500,
+  "ready": true,
+  "noExternal": true,
+  "steps": [
+    { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Timeline" },
+    { "name": "dimmed galaxy, centred behind the page", "js": "[window.__stage.form, window.__stage.s.offPin, window.__stage.s.dim]", "expect": [4, 0, 0.45] },
+    { "name": "ten entries: eight past, two planned", "js": "[...document.querySelectorAll('.tl-list li')].map(li => li.dataset.state).join(',')", "expect": "past,past,past,past,past,past,past,past,planned,planned" },
+    { "scrollTo": ".tl-sky", "wait": 600, "shot": "timeline-sky.png" },
+    { "name": "hovering a star shows its entry", "js": "(() => { const sky = document.querySelector('.tl-sky'), r = sky.getBoundingClientRect(), p = window.__timeline.pts[3]; sky.dispatchEvent(new PointerEvent('pointermove', { clientX: r.left + p[0], clientY: r.top + p[1], bubbles: true })); return [window.__timeline.hot, document.querySelector('.tl-card').hidden, document.querySelector('.tl-card-when').textContent]; })()", "expect": [3, false, "May – Aug 2025"], "shot": "timeline-hover.png" },
+    { "js": "(document.querySelector('.tl-sky').dispatchEvent(new PointerEvent('pointerleave')), document.querySelectorAll('.tl-list li')[0].focus(), true)", "wait": 100 },
+    { "key": "Tab", "wait": 150 },
+    { "name": "Tab moves through the entries", "js": "document.activeElement === document.querySelectorAll('.tl-list li')[1]", "expect": true },
+    { "name": "focus lights the star", "js": "[window.__timeline.hot, document.querySelectorAll('.tl-list li')[1].classList.contains('on'), getComputedStyle(document.activeElement).outlineStyle]", "expect": [1, true, "solid"] },
+    { "js": "(document.querySelectorAll('.tl-list li')[9].focus(), true)", "wait": 150 },
+    { "name": "planned entries are marked", "js": "[window.__timeline.hot, document.querySelectorAll('.tl-list li')[9].querySelector('.tl-state').textContent]", "expect": [9, "PLANNED"], "shot": "timeline-planned.png" },
+    { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true }
+  ]
+}

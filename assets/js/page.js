@@ -35,10 +35,14 @@ function flashName(ms) {
   flashTimer = setTimeout(() => document.querySelectorAll('.flash').forEach(el => el.classList.remove('flash')), ms);
 }
 
+// Full-width pages (timeline, resume, 404) keep the stage centred behind everything; data-dim dims it further.
+const full = document.body.dataset.layout === 'full';
+const pageDim = Number(document.body.dataset.dim || 1);
+
 // Below 1024 px the stage sits centred and dimmed behind full-width panels.
 function fitStage(stage) {
-  stage.pinOffset(env.mobile ? 0 : null);
-  stage.dim(env.mobile ? 0.7 : 1);
+  stage.pinOffset(env.mobile || full ? 0 : null);
+  stage.dim((env.mobile ? 0.7 : 1) * pageDim);
 }
 
 function bootStage() {
@@ -78,7 +82,7 @@ function wireMapping(target, mapping) {
       clearTimeout(pending);
       if (performance.now() - since >= 450) commit(); else pending = setTimeout(commit, 150);
     }
-    if (target.layout && !env.mobile && hero) {
+    if (target.layout && !env.mobile && !full && hero) {
       const L = stageLayout(splitProgress(hero.getBoundingClientRect().bottom, vh));
       target.layout(L.off, L.zoom);
     }
@@ -184,6 +188,9 @@ function main() {
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[target && target.form >= 0 ? target.form : 4] });
   initRail({ enabled: env.fine }); // CSS hides it below 1024 px
   wireIntro(stage, remap);
+  // Page modules, loaded only where the page needs one.
+  const pageModule = { timeline: () => import('./timeline.js').then(m => m.initTimeline({ reduced: env.reduced })) }[document.body.dataset.page];
+  if (pageModule) pageModule();
 }
 
 main();

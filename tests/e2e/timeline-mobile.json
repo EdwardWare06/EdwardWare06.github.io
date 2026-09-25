@@ -1,0 +1,13 @@
+{
+  "url": "http://localhost:8080/timeline/",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "ready": true,
+  "steps": [
+    { "name": "phone dim stacks with the page dim", "js": "Math.round(window.__stage.s.dim * 1000) / 1000", "expect": 0.315 },
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= screen.width", "expect": true },
+    { "scrollTo": ".tl-sky", "wait": 500, "shot": "timeline-mobile-sky.png" },
+    { "scrollTo": "#entries", "wait": 400, "shot": "timeline-mobile-list.png" }
+  ]
+}
