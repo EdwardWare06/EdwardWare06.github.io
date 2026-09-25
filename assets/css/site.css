@@ -211,3 +211,37 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
   .tl-list li{grid-template-columns:1fr;gap:.2rem}
   .tl-card{width:min(280px,80vw)}
 }
+
+/* ---------- resume ---------- */
+.print-head{display:none}
+.resume section + section{margin-top:3.4rem}
+.rs-item{padding:1rem 0;border-top:1px dashed rgba(140,170,230,.22)}
+.rs-item header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.3rem 1rem}
+.rs-item h3{margin:0;font:500 1rem/1.4 var(--mono);color:var(--ink)}
+.rs-when{color:var(--soft)}
+.rs-role{margin:.35rem 0 0;color:var(--soft)}
+.rs-item ul{margin:.6rem 0 0;padding-left:1.1rem}
+.rs-item li{margin:.25rem 0}
+.rs-skills{max-width:none}
+.rs-skills div{grid-template-columns:14ch 1fr}
+
+@media print{
+  @page{size:letter;margin:.5in .6in}
+  :root{--ink:#111;--body:#222;--soft:#444;--muted:#555;color-scheme:light} /* dark scheme would print dark page margins */
+  html,body{background:#fff!important;color:#222}
+  body{font-size:10pt;line-height:1.4}
+  .stage,.nav,.site-footer,.skip-link,.rail,.fx-overlay,.page-hero,.intro{display:none!important}
+  .print-head{display:block;margin:0 0 12pt;padding-bottom:8pt;border-bottom:1.5pt solid #111}
+  .ph-name{margin:0;font:700 22pt/1 var(--display);font-variation-settings:'wdth' 125,'wght' 700;letter-spacing:.03em;color:#111}
+  .ph-line{margin:4pt 0 0;font-size:9.5pt;color:#333}
+  .panel{max-width:none;margin:0;padding:0;background:none!important;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .panel .fig{display:none}
+  .panel h2{font-size:12pt;margin:12pt 0 4pt;color:#111;text-shadow:none;letter-spacing:.06em}
+  .resume section + section{margin-top:6pt}
+  .rs-item{padding:5pt 0;border-top:.5pt solid #bbb;break-inside:avoid}
+  .rs-item h3{font-size:10.5pt;color:#111}
+  .rs-skills dt{color:#444}
+  .rs-skills dd{color:#111}
+  .spec div{border-top:.5pt solid #bbb}
+  a,.dec{color:#111;border:0;text-decoration:none}
+}
