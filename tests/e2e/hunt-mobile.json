@@ -1,0 +1,12 @@
+{
+  "url": "http://localhost:8080/work/hunt/",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "ready": true,
+  "steps": [
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= screen.width", "expect": true },
+    { "name": "title fits the width", "js": "document.querySelector('h1').getBoundingClientRect().right <= innerWidth", "expect": true, "shot": "hunt-mobile-hero.png" },
+    { "scrollTo": "#how", "wait": 400, "shot": "hunt-mobile-how.png" }
+  ]
+}

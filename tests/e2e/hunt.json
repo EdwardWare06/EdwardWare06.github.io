@@ -1,0 +1,20 @@
+{
+  "url": "http://localhost:8080/work/hunt/",
+  "settle": 2500,
+  "ready": true,
+  "noExternal": true,
+  "steps": [
+    { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Hunt / LaSalle" },
+    { "name": "stage shows the black hole", "js": "window.__stage.form", "expect": 2, "shot": "hunt-hero.png" },
+    { "name": "five sections", "js": "[...document.querySelectorAll('.sec')].map(s => s.dataset.section)", "expect": ["What it is", "My part", "How it works", "Numbers", "Stack"] },
+    { "name": "the numbers section", "js": "[...document.querySelectorAll('#numbers dd')].map(d => d.textContent)", "expect": ["9 source tables, mirrored read-only", "Every hour"] },
+    { "name": "text only: no images, prices or version numbers", "js": "[document.querySelectorAll('main img').length, /\\$\\s?\\d/.test(document.body.textContent), /\\b[vV]?1\\.\\d\\b/.test(document.body.textContent)]", "expect": [0, false, false] },
+    { "scrollTo": "#how", "wait": 1200, "shot": "hunt-how.png" },
+    { "name": "six pipeline steps, pulse timed for six", "js": "[document.querySelectorAll('.pipeline li').length, getComputedStyle(document.querySelector('.pipeline')).getPropertyValue('--n').trim()]", "expect": [6, "6"] },
+    { "scrollTo": "#part", "wait": 400 },
+    { "hover": "#part .spec", "wait": 700 },
+    { "name": "dimension lines on the role rows", "js": "window.__details.state.dims", "expect": 1, "shot": "hunt-part.png" },
+    { "name": "next project link", "js": "document.querySelector('a.next').getAttribute('href')", "expect": "/work/voice-recorder/" },
+    { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true }
+  ]
+}

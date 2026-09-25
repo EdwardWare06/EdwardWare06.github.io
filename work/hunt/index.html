@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hunt / LaSalle — Edward Ware</title>
+<meta name="description" content="Maintenance and operations analytics for Hunt Forest Products' LaSalle Lumber mill, built through Louisiana Tech. Edward Ware is a co-lead developer.">
+<link rel="canonical" href="https://edwardware06.github.io/work/hunt/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Edward Ware">
+<meta property="og:title" content="Hunt / LaSalle — Edward Ware">
+<meta property="og:description" content="Maintenance and operations analytics for Hunt Forest Products' LaSalle Lumber mill, built through Louisiana Tech. Edward Ware is a co-lead developer.">
+<meta property="og:url" content="https://edwardware06.github.io/work/hunt/">
+<meta property="og:image" content="https://edwardware06.github.io/assets/img/og-galaxy.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Edward Ware's name over a spiral galaxy made of particles.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#020308">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css">
+<script type="module" src="/assets/js/page.js"></script>
+</head>
+<body data-page="project" data-form="black-hole">
+<a class="skip-link" href="#what">Skip to the project</a>
+<div class="stage" aria-hidden="true"><canvas></canvas></div>
+<main>
+  <header class="hero project-hero" data-section="Hunt / LaSalle">
+    <nav class="nav label" aria-label="Main">
+      <a class="home" href="/">E · W</a><a href="/#work">WORK</a><a href="/about/">ABOUT</a><a href="/timeline/">TIMELINE</a><a href="/resume/">RESUME</a>
+    </nav>
+    <div class="hero-block">
+      <p class="label kicker">FIG. 01 — INDUSTRY RESEARCH</p>
+      <h1 class="display title">Hunt / LaSalle</h1>
+      <p class="lede">Maintenance and operations analytics for Hunt Forest Products' LaSalle Lumber mill, built through Louisiana Tech. The details stay private.</p>
+      <div class="cta"><a class="back label" href="/#hunt">← BACK TO THE WORK</a></div>
+    </div>
+    <p class="label cue" aria-hidden="true">SCROLL ↓</p>
+  </header>
+
+  <div class="split">
+    <div class="col">
+      <section class="sec" id="what" data-section="What it is" aria-labelledby="h-what">
+        <p class="label fig">01 — WHAT IT IS</p>
+        <h2 class="display" id="h-what">What it is</h2>
+        <p>A maintenance analytics dashboard for the mill. It helps plan preventive maintenance, flags equipment that behaves unusually, and shows how the planned work is getting done.</p>
+        <p>On the operations side, a separate monitor watches trim loss and raises alerts. Screens and data stay private, so this page describes the work in general terms.</p>
+      </section>
+
+      <section class="sec" id="part" data-section="My part" aria-labelledby="h-part">
+        <p class="label fig">02 — MY PART</p>
+        <h2 class="display" id="h-part">My part</h2>
+        <p>I'm one of two lead developers on the maintenance dashboard. With a small team, I help design and build the product: how it is laid out and how it runs at the mill. On the operations side, I contribute views and occasional coding to the trim-loss monitor.</p>
+        <dl class="spec">
+          <div><dt>ROLE</dt><dd>Co-lead Developer &amp; Designer, Maintenance Analytics</dd></div>
+          <div><dt>ALSO</dt><dd>Contributing Developer, Operations Analytics</dd></div>
+          <div><dt>SINCE</dt><dd>October 2025, contract work through Louisiana Tech</dd></div>
+        </dl>
+      </section>
+
+      <section class="sec" id="how" data-section="How it works" aria-labelledby="h-how">
+        <p class="label fig">03 — HOW IT WORKS</p>
+        <h2 class="display" id="h-how">How it works</h2>
+        <ol class="pipeline" style="--n:6">
+          <li><b>Mirror</b><span>work-order data is copied, read-only, from the mill's system</span></li>
+          <li><b>Refresh</b><span>the copy updates every hour</span></li>
+          <li><b>Plan</b><span>preventive maintenance is planned from past work orders</span></li>
+          <li><b>Flag</b><span>unusual equipment behavior is marked for a closer look</span></li>
+          <li><b>Track</b><span>execution health shows how planned work gets done</span></li>
+          <li><b>Watch</b><span>the operations monitor raises trim-loss alerts</span></li>
+        </ol>
+      </section>
+
+      <section class="sec" id="numbers" data-section="Numbers" aria-labelledby="h-numbers">
+        <p class="label fig">04 — NUMBERS</p>
+        <h2 class="display" id="h-numbers">Numbers</h2>
+        <dl class="spec">
+          <div><dt>SOURCE</dt><dd>9 source tables, mirrored read-only</dd></div>
+          <div><dt>REFRESH</dt><dd>Every hour</dd></div>
+        </dl>
+      </section>
+
+      <section class="sec" id="stack" data-section="Stack" aria-labelledby="h-stack">
+        <p class="label fig">05 — STACK</p>
+        <h2 class="display" id="h-stack">Stack</h2>
+        <dl class="spec">
+          <div><dt>SERVER</dt><dd>Python · Flask</dd></div>
+          <div><dt>INTERFACE</dt><dd>React</dd></div>
+          <div><dt>PACKAGING</dt><dd>Docker</dd></div>
+        </dl>
+        <a class="next label" href="/work/voice-recorder/">NEXT · VOICE RECORDER →</a>
+      </section>
+    </div>
+    <div class="split-stage" aria-hidden="true"></div>
+  </div>
+</main>
+<footer class="site-footer label"><span>EDWARD WARE · RUSTON, LA</span></footer>
+</body>
+</html>
