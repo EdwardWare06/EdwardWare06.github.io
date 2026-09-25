@@ -146,7 +146,7 @@ body.ih-rest :is(.nav,.kicker,.lede,.cta,.cue,.rail){opacity:0;transition:none}
 .back,.next{color:var(--soft);text-decoration:none;border-bottom:1px dotted rgba(159,180,214,.45)}
 .back:hover,.back:focus-visible,.next:hover,.next:focus-visible{color:var(--ink);border-bottom-color:var(--lime)}
 .next{display:inline-block;margin-top:2.4rem}
-body[data-page="project"] .sec{min-height:85vh}
+body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
 
 /* how it works: a light pulse travels down the steps and each node lights as it passes */
 .pipeline{--n:8;list-style:none;margin:.4rem 0 0;padding:0 0 0 1.6rem;position:relative;max-width:46ch}

@@ -1,0 +1,12 @@
+{
+  "url": "http://localhost:8080/about/",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "ready": true,
+  "steps": [
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= screen.width", "expect": true, "shot": "about-mobile-hero.png" },
+    { "scrollTo": "#training .ccard", "wait": 1300 },
+    { "name": "card in view joins its constellation", "js": "window.__details.state.cards >= 1", "expect": true, "shot": "about-mobile-training.png" }
+  ]
+}
