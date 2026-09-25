@@ -245,3 +245,17 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
   .spec div{border-top:.5pt solid #bbb}
   a,.dec{color:#111;border:0;text-decoration:none}
 }
+
+/* ---------- 404: lost signal ---------- */
+.lost{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding:0 var(--gutter) 11vh}
+.lost-hud span{position:absolute;color:var(--muted);pointer-events:none}
+.lost-hud .tl{left:var(--gutter);top:14vh}.lost-hud .tr{right:var(--gutter);top:14vh}
+.lost-hud .bl{left:var(--gutter);bottom:4vh}.lost-hud .br{right:var(--gutter);bottom:4vh}
+.lost-msg{max-width:52rem}
+.lost .kicker{margin:0 0 1rem}
+.lost-title{font-size:clamp(2.6rem,7vw,6.6rem);line-height:.95;margin:0}
+.lost .lede{margin:1.3rem auto 2rem;max-width:44ch}
+.lost .cta{justify-content:center;margin-top:0}
+.lost-flash{position:fixed;inset:0;z-index:30;background:#ebf4ff;opacity:0;pointer-events:none}
+.lost-flash.go{animation:introflash .55s ease-out forwards}
+@media (max-width:1023px){.lost-hud .tr,.lost-hud .br{display:none}}

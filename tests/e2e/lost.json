@@ -1,0 +1,16 @@
+{
+  "url": "http://localhost:8080/404.html",
+  "settle": 2500,
+  "ready": true,
+  "noExternal": true,
+  "steps": [
+    { "name": "singularity at the centre", "js": "[window.__stage.form, window.__stage.s.offPin]", "expect": [6, 0] },
+    { "name": "the receiver text has decoded", "js": "[...document.querySelectorAll('[data-decode]')].map(e => e.textContent)", "expect": ["EW-06 · DEEP FIELD RECEIVER", "LAST CONTACT —", "RA ??h ??m ??s", "DEC ??° ??′", "// ERROR 404", "LOST SIGNAL"], "shot": "lost.png" },
+    { "name": "the point breathes (one full 2.9 s cycle)", "js": "new Promise(r => { const a = [], t0 = performance.now(); const f = () => { a.push(window.__stage.s.singT); if (performance.now() - t0 < 3200) requestAnimationFrame(f); else r(Math.max(...a) - Math.min(...a) > 0.003); }; f(); })", "expect": true },
+    { "name": "not indexed", "js": "document.querySelector('meta[name=robots]').content", "expect": "noindex" },
+    { "clickSel": ".orbit", "wait": 250 },
+    { "name": "RETURN TO ORBIT detonates into the galaxy", "js": "[window.__stage.form, document.querySelector('.lost-flash').classList.contains('go'), location.pathname]", "expect": [4, true, "/404.html"], "shot": "lost-bang.png" },
+    { "wait": 1500 },
+    { "name": "then Home loads, without the intro", "js": "[location.pathname, !!document.querySelector('.intro')]", "expect": ["/", false] }
+  ]
+}

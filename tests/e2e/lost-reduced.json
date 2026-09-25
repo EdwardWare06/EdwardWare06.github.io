@@ -1,0 +1,10 @@
+{
+  "url": "http://localhost:8080/404.html",
+  "media": { "prefers-reduced-motion": "reduce" },
+  "settle": 2000,
+  "steps": [
+    { "name": "reduce motion: the text shows at once", "js": "document.querySelector('.lost-title').textContent", "expect": "LOST SIGNAL" },
+    { "clickSel": ".orbit", "wait": 900 },
+    { "name": "reduce motion: the button is a plain link home", "js": "location.pathname", "expect": "/" }
+  ]
+}

@@ -189,7 +189,10 @@ function main() {
   initRail({ enabled: env.fine }); // CSS hides it below 1024 px
   wireIntro(stage, remap);
   // Page modules, loaded only where the page needs one.
-  const pageModule = { timeline: () => import('./timeline.js').then(m => m.initTimeline({ reduced: env.reduced })) }[document.body.dataset.page];
+  const pageModule = {
+    timeline: () => import('./timeline.js').then(m => m.initTimeline({ reduced: env.reduced })),
+    404: () => import('./lost.js').then(m => m.initLost(stage, { flash: flashName, reduced: env.reduced }))
+  }[document.body.dataset.page];
   if (pageModule) pageModule();
 }
 
