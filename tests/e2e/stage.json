@@ -22,6 +22,8 @@
     {"js": "window.__stage.setForm(5)", "wait": 4000, "shot": "form-5-planet-4s.png"},
     {"name": "planet still healthy after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 36000))", "expect": true, "shot": "form-5-planet-40s.png"},
     {"name": "low tier halves the particles", "js": "(window.__stage.setTier('low'), window.__stage.count)", "expect": 131072, "wait": 2500},
-    {"name": "low tier renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true}
+    {"name": "low tier renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true},
+    {"js": "window.__stage.setForm(0)", "wait": 3500},
+    {"name": "low tier: the brain is rebuilt for the new particle count", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-0-brain-low.png"}
   ]
 }

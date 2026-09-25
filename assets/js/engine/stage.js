@@ -1,6 +1,6 @@
 // The stage: one WebGL2 particle system that changes form. Ported from the approved prototype.
 import { createContext, program, programsDone, checkLinked, texture, framebuffer, accumulation, freeTarget } from './gl.js';
-import { VSQ, UPDATE_FS, RENDER_VS, POINT_FS, FADE_FS, DISPLAY_FS } from './shaders.js';
+import { VSQ, UPDATE_FS, RENDER_VS, POINT_FS, FADE_FS, BRAIN_FS, DISPLAY_FS } from './shaders.js';
 import { FORM, CAMERA, TRAIL_FADE } from './forms.js';
 import { TIERS, FrameMeter } from './quality.js';
 import { smooth, lerpAngle } from '../lib/math.js';
@@ -27,7 +27,7 @@ export class Stage {
     this.gl = gl; this.canvas = canvas; this.onFlash = onFlash;
     this.progs = {
       upd: program(gl, VSQ, UPDATE_FS), ren: program(gl, RENDER_VS, POINT_FS), fade: program(gl, VSQ, FADE_FS),
-      disp: program(gl, VSQ, DISPLAY_FS)
+      brain: program(gl, VSQ, BRAIN_FS), disp: program(gl, VSQ, DISPLAY_FS)
     };
     this.ext = gl.getExtension('KHR_parallel_shader_compile');
     this.phase = 'compile'; // compile → prime → warm (see _prepare)
@@ -124,8 +124,8 @@ export class Stage {
   _allocState(cols, rows) {
     const gl = this.gl, n = cols * rows;
     if (this.SP) {
-      [...this.SP, ...this.SV].forEach(t => gl.deleteTexture(t));
-      this.SF.forEach(f => gl.deleteFramebuffer(f));
+      [...this.SP, ...this.SV, this.BRAIN].forEach(t => gl.deleteTexture(t));
+      [...this.SF, this.BRAINF].forEach(f => gl.deleteFramebuffer(f));
     }
     const P = new Float32Array(n * 4), V = new Float32Array(n * 4);
     for (let i = 0; i < n; i++) {
@@ -136,6 +136,7 @@ export class Stage {
     const tex = data => texture(gl, cols, rows, { internal: gl.RGBA32F, format: gl.RGBA, type: gl.FLOAT, data });
     this.SP = [tex(P), tex(P)]; this.SV = [tex(V), tex(V)];
     this.SF = [framebuffer(gl, [this.SP[0], this.SV[0]]), framebuffer(gl, [this.SP[1], this.SV[1]])];
+    this.BRAIN = tex(P); this.BRAINF = framebuffer(gl, [this.BRAIN]); this.brainDirty = true;
     this.si = 0; this.cols = cols; this.rows = rows;
   }
 
@@ -222,12 +223,23 @@ export class Stage {
     this.ready = true;
   }
 
+  // The brain's targets depend only on the particle id: build them once for each state allocation.
+  _buildBrain() {
+    const gl = this.gl;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.BRAINF); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
+    gl.useProgram(this.progs.brain.p);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    this.brainDirty = false;
+  }
+
   _step(dt, t, m, turb, mag) {
     const gl = this.gl, U = this.progs.upd, s = this.s;
+    if (this.brainDirty) this._buildBrain();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.SF[1 - this.si]); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
     gl.useProgram(U.p);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(U.u.uP, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.SV[this.si]); gl.uniform1i(U.u.uV, 1);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.BRAIN); gl.uniform1i(U.u.uBrain, 2);
     gl.uniform1f(U.u.uT, t); gl.uniform1f(U.u.uDt, dt); gl.uniform1f(U.u.uMix, m); gl.uniform1f(U.u.uTurb, turb);
     gl.uniform1i(U.u.uF0, s.prev); gl.uniform1i(U.u.uF1, s.cur); gl.uniform3fv(U.u.uM, mag);
     gl.uniform1f(U.u.uReset, s.reset ? 1 : 0); gl.uniform1f(U.u.uSing, s.sing); gl.uniform1f(U.u.uKick, s.kick);
