@@ -68,8 +68,7 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
   const rr = (x, y, w, h, r) => { X.beginPath(); X.moveTo(x + r, y); X.arcTo(x + w, y, x + w, y + h, r); X.arcTo(x + w, y + h, x, y + h, r); X.arcTo(x, y + h, x, y, r); X.arcTo(x, y, x + w, y, r); X.closePath(); };
   const arrow = (x, y, ang, sz) => { X.beginPath(); X.moveTo(x, y); X.lineTo(x - Math.cos(ang - 0.4) * sz, y - Math.sin(ang - 0.4) * sz); X.lineTo(x - Math.cos(ang + 0.4) * sz, y - Math.sin(ang + 0.4) * sz); X.closePath(); X.fill(); };
 
-  // The width line sits 12 px above a block, unless something already occupies that band
-  // (in Contact the EMAIL ME button sits right above the CODE row); then it goes below.
+  // The width line sits 12 px above a block, unless something already occupies that band; then it goes below.
   const bandTaken = (el, r) => [0.08, 0.5, 0.92].some(f => {
     const hit = document.elementFromPoint(r.left + r.width * f, r.top - 12);
     return hit && !hit.contains(el) && !el.contains(hit);

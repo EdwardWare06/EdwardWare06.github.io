@@ -50,6 +50,7 @@ main,.site-footer{position:relative;z-index:1}
 .name .ln span{display:inline-block}
 .lede{max-width:38ch;margin:2rem 0 0;color:var(--soft)}
 .cta{margin-top:2.4rem;display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center}
+#contact .cta{margin:1.2rem 0 1.6rem}
 .cue{position:absolute;left:var(--gutter);bottom:4.5vh;margin:0;color:#6f82a3}
 
 /* ---------- buttons ---------- */
