@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=6",
+  "settle": 1000,
+  "ready": true,
+  "steps": [
+    { "js": "(window.__stage.s.yaw = 0.3 + Math.PI + 0.2, window.__stage.setForm(5))", "wait": 4000 },
+    { "name": "the storm planet always settles on the open-ring view, never its dark mirror", "js": "[Math.cos(window.__stage.s.yaw - 0.3) > 0.99, Math.round(window.__stage.cam.pitch * 100) / 100]", "expect": [true, 0.28], "shot": "planet-view.png" }
+  ]
+}

@@ -117,8 +117,9 @@ export class Stage {
     return w;
   }
 
-  // planet: hold one open-ring view (or its mirror, whichever is closer) so the ring does not swing
-  _planetYaw() { return 0.3 + Math.PI * Math.round((this.s.yaw - 0.3) / Math.PI); }
+  // planet: hold the one open-ring view (nearest full turn). The half-turn mirror is not equivalent:
+  // the tilted ring opens the other way and reads as a dark ring behind a dim planet.
+  _planetYaw() { const turn = Math.PI * 2; return 0.3 + turn * Math.round((this.s.yaw - 0.3) / turn); }
 
   _allocState(cols, rows) {
     const gl = this.gl, n = cols * rows;
