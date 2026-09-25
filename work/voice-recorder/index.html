@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Recorder — Edward Ware</title>
+<meta name="description" content="A local speaker-ID tool: it transcribes a room recording, splits it by speaker and matches each voice to a team member. Built by Edward Ware.">
+<link rel="preload" href="/assets/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css">
+<script type="module" src="/assets/js/page.js"></script>
+<script type="module" src="/assets/js/demos/speaker-split.js"></script>
+</head>
+<body data-page="project" data-form="pulsar">
+<a class="skip-link" href="#what">Skip to the project</a>
+<div class="stage" aria-hidden="true"><canvas></canvas></div>
+<main>
+  <header class="hero project-hero" data-section="Voice Recorder">
+    <nav class="nav label" aria-label="Main">
+      <a class="home" href="/">E · W</a><a href="/#work">WORK</a><a href="/about/">ABOUT</a><a href="/timeline/">TIMELINE</a><a href="/resume/">RESUME</a>
+    </nav>
+    <div class="hero-block">
+      <p class="label kicker">FIG. 02 — LOCAL AI</p>
+      <h1 class="display title">Voice Recorder</h1>
+      <p class="lede">A speaker-ID tool for small teams. It transcribes a room recording, splits it by speaker, and puts a name on every line. Everything runs on one machine.</p>
+      <div class="cta"><a class="back label" href="/#voice">← BACK TO THE WORK</a></div>
+    </div>
+    <p class="label cue" aria-hidden="true">SCROLL ↓</p>
+  </header>
+
+  <div class="split">
+    <div class="col">
+      <section class="sec" id="what" data-section="What it is" aria-labelledby="h-what">
+        <p class="label fig">01 — WHAT IT IS</p>
+        <h2 class="display" id="h-what">What it is</h2>
+        <p>Import a room recording, or record one in the browser. The app transcribes it, works out who spoke when, and matches each voice against the team's enrolled voiceprints.</p>
+        <p>When someone says "My name is…", it links that name to the voice. Open any transcript to confirm or correct a speaker; every confirmation improves the next match. Audio, transcripts and voiceprints never leave the machine.</p>
+      </section>
+
+      <section class="sec" id="how" data-section="How it works" aria-labelledby="h-how">
+        <p class="label fig">02 — HOW IT WORKS</p>
+        <h2 class="display" id="h-how">How it works</h2>
+        <ol class="pipeline">
+          <li><b>Upload</b><span>a recording, or live audio from the browser over a WebSocket</span></li>
+          <li><b>Normalize</b><span>ffmpeg converts it to 16 kHz mono</span></li>
+          <li><b>Transcribe</b><span>faster-whisper</span></li>
+          <li><b>Diarize</b><span>pyannote 3.1 works out who spoke when</span></li>
+          <li><b>Embed</b><span>an ECAPA voiceprint for every line</span></li>
+          <li><b>Match</b><span>cosine similarity against enrolled members</span></li>
+          <li><b>Name link</b><span>"My name is…" ties a name to a voice</span></li>
+          <li><b>Store</b><span>transcript, speakers and audio stay local</span></li>
+        </ol>
+      </section>
+
+      <section class="sec" id="demo" data-section="Live demo" aria-labelledby="h-demo">
+        <p class="label fig">03 — LIVE DEMO</p>
+        <h2 class="display" id="h-demo">Speaker split</h2>
+        <p>A made-up team meeting. Press play: the waveform splits by speaker as it plays, and each line gets a name. No microphone, no real audio.</p>
+        <div class="demo" id="speaker-demo">
+          <canvas class="demo-wave" aria-hidden="true"></canvas>
+          <button type="button" class="btn demo-play"><span>PLAY ▸</span></button>
+          <ol class="demo-lines" aria-live="polite"></ol>
+        </div>
+      </section>
+
+      <section class="sec" id="numbers" data-section="Numbers" aria-labelledby="h-numbers">
+        <p class="label fig">04 — NUMBERS</p>
+        <h2 class="display" id="h-numbers">Numbers</h2>
+        <dl class="spec">
+          <div><dt>ENROLL</dt><dd>3–5 clips per person, 15–30 s each</dd></div>
+          <div><dt>MATCH</dt><dd>cosine floor 0.55, else "unknown"</dd></div>
+          <div><dt>MODELS</dt><dd>Whisper tiny → large-v3</dd></div>
+          <div><dt>LIVE</dt><dd>browser mic, streamed over a WebSocket</dd></div>
+          <div><dt>DATA</dt><dd>never leaves the machine</dd></div>
+        </dl>
+      </section>
+
+      <section class="sec" id="stack" data-section="Stack" aria-labelledby="h-stack">
+        <p class="label fig">05 — STACK</p>
+        <h2 class="display" id="h-stack">Stack</h2>
+        <dl class="spec">
+          <div><dt>SERVER</dt><dd>Python · FastAPI · SQLAlchemy</dd></div>
+          <div><dt>SPEECH</dt><dd>faster-whisper · pyannote.audio · SpeechBrain ECAPA</dd></div>
+          <div><dt>AUDIO</dt><dd>ffmpeg · PyTorch · torchaudio</dd></div>
+          <div><dt>RUNS</dt><dd>Local or Docker, CPU or CUDA</dd></div>
+        </dl>
+        <a class="next label" href="/work/lightning/">NEXT · LIGHTNING BACKGROUND →</a>
+      </section>
+    </div>
+    <div class="split-stage" aria-hidden="true"></div>
+  </div>
+</main>
+<footer class="site-footer label"><span>EDWARD WARE · RUSTON, LA</span></footer>
+</body>
+</html>

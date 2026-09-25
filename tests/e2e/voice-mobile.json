@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/work/voice-recorder/",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "steps": [
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true },
+    { "scrollTo": "#demo", "wait": 500 },
+    { "name": "demo fits the width", "js": "document.querySelector('.demo').getBoundingClientRect().right <= innerWidth", "expect": true, "shot": "voice-mobile-demo.png" }
+  ]
+}

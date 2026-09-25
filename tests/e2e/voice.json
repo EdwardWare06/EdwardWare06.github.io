@@ -1,0 +1,19 @@
+{
+  "url": "http://localhost:8080/work/voice-recorder/",
+  "settle": 3000,
+  "noExternal": true,
+  "steps": [
+    { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Voice Recorder" },
+    { "name": "stage shows the pulsar", "js": "window.__stage.form", "expect": 3, "shot": "voice-hero.png" },
+    { "name": "eight pipeline steps", "js": "document.querySelectorAll('.pipeline li').length", "expect": 8 },
+    { "scrollTo": "#how", "wait": 1200, "shot": "voice-how.png" },
+    { "scrollTo": "#demo", "wait": 800 },
+    { "clickSel": ".demo-play", "wait": 11500 },
+    { "name": "four transcript lines, each with a name", "js": "[...document.querySelectorAll('.demo-lines .who')].map(e => e.textContent)", "expect": ["ALEX", "SAM", "JORDAN", "ALEX"], "shot": "voice-demo.png" },
+    { "name": "the self-introduction links the name", "js": "document.querySelector('.demo-lines .meta').textContent.startsWith('NAME LINK')", "expect": true },
+    { "scrollTo": "#numbers", "wait": 600 },
+    { "hover": "#numbers .spec", "wait": 700, "shot": "voice-numbers.png" },
+    { "name": "dimension lines on the numbers", "js": "window.__details.state.dims", "expect": 1 },
+    { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true }
+  ]
+}
