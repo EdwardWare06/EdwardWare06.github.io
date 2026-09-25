@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 
-// Patterns only; the real number and address never appear in the repo (see disclosure.test.js).
+// Patterns only (see disclosure.test.js for the real guard).
 const PHONE = /\(?\b\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b/;
 const STREET = /\b\d{1,5}\s+[NSEW]\.?\s+[A-Z][a-z]+\s+(Ave|St|Rd|Blvd|Dr|Ln)\b/;
 
