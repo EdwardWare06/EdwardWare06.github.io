@@ -56,10 +56,11 @@ function bootStage() {
 // Section under the middle of the window picks the form; the hero's scroll position moves the stage right.
 function wireMapping(target, mapping) {
   const secs = sections(), hero = document.querySelector('.hero');
-  let active = -1, settling = true;
+  let active = -1, settling = true, want = null, since = 0, pending = 0;
   // Until the page has loaded (and the browser has jumped to any #anchor), forms appear already formed.
   const settled = () => requestAnimationFrame(() => { settling = false; });
   if (document.readyState === 'complete') settled(); else addEventListener('load', settled, { once: true });
+  const commit = () => { clearTimeout(pending); if (want !== null) { target.setForm(want); want = null; } };
   const update = () => {
     const vh = innerHeight;
     const idx = activeIndex(secs.map(el => el.getBoundingClientRect().top), vh);
@@ -68,7 +69,14 @@ function wireMapping(target, mapping) {
       active = idx;
       document.body.dataset.active = String(idx);
       const f = mapping[Math.min(idx, mapping.length - 1)];
-      if (settling && target.snap) target.snap(f); else target.setForm(f); // no morph, no flash on arrival
+      if (settling && target.snap) { want = null; target.snap(f); } // no morph, no flash on arrival
+      else { want = f; since = performance.now(); }
+    }
+    // A fast scroll passes sections without starting their forms: a form starts once scrolling
+    // pauses, or once its section has held the middle of the window for a moment.
+    if (want !== null) {
+      clearTimeout(pending);
+      if (performance.now() - since >= 450) commit(); else pending = setTimeout(commit, 150);
     }
     if (target.layout && !env.mobile && hero) {
       const L = stageLayout(splitProgress(hero.getBoundingClientRect().bottom, vh));

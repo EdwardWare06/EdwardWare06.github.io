@@ -40,7 +40,7 @@ export class Stage {
     this.FI = new Float32Array(6).fill(1);     // storm flash intensities
     this.meter = new FrameMeter(90);
     this.W = 0; this.H = 0; this.dpr = 1; this.acc = null; this.cols = 0; this.rows = 0;
-    this.ready = false; this.running = false; this.visible = !document.hidden; this.onScreen = true;
+    this.ready = false; this.running = false; this.from = null; this.visible = !document.hidden; this.onScreen = true;
     this.setTier(tier);
     new ResizeObserver(() => this._resize(false)).observe(canvas);
     new IntersectionObserver(es => { this.onScreen = es[es.length - 1].isIntersecting; }).observe(canvas);
@@ -65,13 +65,18 @@ export class Stage {
     const s = this.s;
     if (f === s.cur) return;
     if (s.cuts) { this.snap(f); return; }
-    s.prev = s.cur; s.cur = f; s.sw = s.t; s.reset = true;
+    // An interrupted morph starts from wherever the blend is now, so the camera and lens never jump.
+    // The particles keep the form that dominates the picture as their starting point.
+    const m = smooth((s.t - s.sw) / TRANSITION);
+    this.from = this._weights(m);
+    if (m >= 0.5) s.prev = s.cur;
+    s.cur = f; s.sw = s.t; s.reset = true;
     if (f === FORM.PLANET) s.pyaw = this._planetYaw();
     if (!s.reduced) this.onFlash(260, 'form');
   }
   snap(f) {
     const s = this.s;
-    s.prev = f; s.cur = f; s.sw = s.t - 10; s.reset = true;
+    s.prev = f; s.cur = f; s.sw = s.t - 10; s.reset = true; this.from = null;
     if (f === FORM.PLANET) s.pyaw = this._planetYaw();
     if (this.ready) this._settle(150);
   }
@@ -101,6 +106,15 @@ export class Stage {
   }
 
   /* ---------- internals ---------- */
+  // Weight of each form in the picture at morph progress m.
+  _weights(m) {
+    const s = this.s, w = new Array(CAMERA.length).fill(0);
+    if (this.from) for (let i = 0; i < w.length; i++) w[i] = this.from[i] * (1 - m);
+    else w[s.prev] += 1 - m;
+    w[s.cur] += m;
+    return w;
+  }
+
   // planet: hold one open-ring view (or its mirror, whichever is closer) so the ring does not swing
   _planetYaw() { return 0.3 + Math.PI * Math.round((this.s.yaw - 0.3) / Math.PI); }
 
@@ -226,13 +240,13 @@ export class Stage {
     s.zoom += (s.zoomT - s.zoom) * Math.min(1, dt * 6);
 
     const m = smooth((t - s.sw) / TRANSITION);
-    const w = new Array(CAMERA.length).fill(0);
-    w[s.prev] += 1 - m; w[s.cur] += m;
+    const w = this._weights(m);
     let pitch = 0, dist = 0, ys = 0, fade = 0;
     for (let i = 0; i < w.length; i++) {
       if (!w[i]) continue;
       pitch += w[i] * CAMERA[i].p; dist += w[i] * CAMERA[i].d; ys += w[i] * CAMERA[i].ys; fade += w[i] * TRAIL_FADE[i];
     }
+    this.cam = { pitch, dist, fade, lens: w[FORM.BLACK_HOLE] }; // read by the browser checks
     s.yaw += dt * ys;
     const pyaw = s.pyaw + 0.035 * Math.sin(t * 0.25);
     if (w[FORM.PLANET] > 0.999) s.yaw = pyaw;

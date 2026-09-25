@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 3000,
+  "preload": "window.__flashLog = []; Object.defineProperty(window, '__stage', { configurable: true, get() { return this.__s; }, set(v) { const f = v.onFlash; v.onFlash = (ms, why) => { window.__flashLog.push(why); f(ms, why); }; this.__s = v; } });",
+  "steps": [
+    { "clickSel": ".rail-tick:nth-of-type(6)", "wait": 4500 },
+    { "name": "a jump across the page starts one morph, straight to the nebula", "js": "[window.__stage.form, window.__flashLog.filter(w => w === 'form').length]", "expect": [1, 1], "shot": "rail-jump.png" }
+  ]
+}
