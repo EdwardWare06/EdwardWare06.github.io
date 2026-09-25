@@ -6,7 +6,7 @@ import { initialTier, nextTier } from './engine/quality.js';
 import { activeIndex, splitProgress, stageLayout } from './scroll-map.js';
 import { initDetails } from './details.js';
 import { initRail } from './rail.js';
-import { runIntro, shouldPlayIntro, sessionStore } from './intro.js';
+import { runIntro, shouldPlayIntro, sessionStore, markIntroSeen } from './intro.js';
 import { TAIL_RGB } from './engine/forms.js';
 
 const params = new URLSearchParams(location.search);
@@ -141,11 +141,13 @@ function bootFallback() {
 // Home only: the intro on the first visit per session, and the footer's "Replay intro".
 function wireIntro(stage, remap) {
   const replay = document.querySelector('.replay-intro');
+  const play = !!stage && document.body.dataset.page === 'home' &&
+    shouldPlayIntro({ storage: sessionStore(), reduced: env.reduced, hash: location.hash, forced: env.forceIntro, disabled: env.nointro });
+  // The intro belongs to the first page view of a session; any other first view uses it up.
+  if (!play) markIntroSeen(sessionStore());
   if (!stage || env.reduced) { if (replay) replay.hidden = true; return; } // reduce motion: never an intro
   if (document.body.dataset.page !== 'home') return;
-  if (shouldPlayIntro({ storage: sessionStore(), reduced: env.reduced, hash: location.hash, forced: env.forceIntro, disabled: env.nointro })) {
-    runIntro(stage, { flash: flashName }).finished.then(remap);
-  }
+  if (play) runIntro(stage, { flash: flashName }).finished.then(remap);
   replay?.addEventListener('click', () => runIntro(stage, { flash: flashName }).finished.then(remap));
 }
 

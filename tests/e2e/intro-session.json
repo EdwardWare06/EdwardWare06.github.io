@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/work/voice-recorder/",
+  "settle": 2500,
+  "steps": [
+    { "js": "(location.href = '/', true)", "wait": 2500 },
+    { "name": "first view elsewhere: Home opens without the intro", "js": "[location.pathname, !!document.querySelector('.intro'), document.documentElement.classList.contains('intro-lock')]", "expect": ["/", false, false] }
+  ]
+}
