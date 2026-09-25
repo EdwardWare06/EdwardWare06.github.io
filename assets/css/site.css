@@ -28,7 +28,7 @@ img{max-width:100%}
 .flash{color:#fff!important;text-shadow:var(--flash)!important;transition:none!important}
 
 /* ---------- stage ---------- */
-.stage{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--sky)}
+.stage{position:fixed;inset:0;height:100lvh;z-index:0;pointer-events:none;background:var(--sky)} /* large viewport: phone toolbars do not resize it */
 .stage canvas,.stage img{position:absolute;inset:0;width:100%;height:100%;display:block}
 .stage img{object-fit:cover;opacity:0;transition:opacity .9s}
 main,.site-footer{position:relative;z-index:1}

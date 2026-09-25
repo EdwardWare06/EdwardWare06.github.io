@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=1",
+  "settle": 6000,
+  "steps": [
+    { "js": "(window.__L0 = window.__stage.debugLuma(), window.__L0 > 0.0003)", "expect": true },
+    { "viewport": [1300, 940] },
+    { "name": "a resize keeps the trails (nebula brightness holds)", "js": "new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(window.__stage.debugLuma() / window.__L0 > 0.5))))", "expect": true, "shot": "resize-trails.png" }
+  ]
+}

@@ -126,9 +126,18 @@ export class Stage {
     const dpr = Math.min(window.devicePixelRatio || 1, this.dprCap);
     const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
     if (!force && w === this.W && h === this.H) return;
+    const gl = this.gl, old = this.acc, ow = this.W, oh = this.H;
     this.W = w; this.H = h; this.dpr = dpr; this.canvas.width = w; this.canvas.height = h;
-    freeTarget(this.gl, this.acc);
-    this.acc = accumulation(this.gl, w, h);
+    this.acc = accumulation(gl, w, h);
+    if (old) {
+      // keep the trails: scale the old buffer into the new one instead of starting from black
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, old.f); gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.acc.f);
+      gl.blitFramebuffer(0, 0, ow, oh, 0, 0, w, h, gl.COLOR_BUFFER_BIT, gl.LINEAR);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      freeTarget(gl, old);
+    }
+    // setting canvas.width cleared the picture; draw one now so a blank frame is never shown
+    if (this.ready && this.running) this._frame(0);
   }
 
   // Settle the attractor and keep it as the "home" snapshot, then settle the current form.
