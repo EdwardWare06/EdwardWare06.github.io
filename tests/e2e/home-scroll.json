@@ -14,7 +14,7 @@
     { "scrollTo": "#lightning", "wait": 3200 },
     { "name": "Lightning shows the storm planet", "js": "window.__stage.form", "expect": 5, "shot": "home-lightning.png" },
     { "scrollTo": "#about", "wait": 3500 },
-    { "name": "About shows the attractor", "js": "window.__stage.form", "expect": 0, "shot": "home-about.png" },
+    { "name": "About shows the brain", "js": "window.__stage.form", "expect": 0, "shot": "home-about.png" },
     { "scrollTo": "#contact", "wait": 1300, "shot": "home-contact-mid.png" },
     { "wait": 2200 },
     { "name": "Contact shows the nebula", "js": "window.__stage.form", "expect": 1, "shot": "home-contact.png" },

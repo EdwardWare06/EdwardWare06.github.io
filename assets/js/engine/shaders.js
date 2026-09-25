@@ -4,8 +4,7 @@ export const HDR = '#version 300 es\nprecision highp float;\nprecision highp int
 export const VSQ = HDR + 'const vec2 Q[3]=vec2[3](vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));void main(){gl_Position=vec4(Q[gl_VertexID],0.,1.);}';
 
 const HASH = 'float hash(vec2 p){vec3 p3=fract(vec3(p.xyx)*.1031);p3+=dot(p3,p3.yzx+33.33);return fract((p3.x+p3.y)*p3.z);}\n';
-const AIZ = 'vec3 aiz(vec3 p){const float a=.95,b=.7,c=.6,d=3.5,e=.25,f=.1;float x=p.x,y=p.y,z=p.z;return vec3((z-b)*x-d*y,d*x+(z-b)*y,c+a*z-z*z*z/3.-(x*x+y*y)*(1.+e*z)+f*z*x*x*x);}\n';
-const COMMON = HASH + AIZ + `
+const COMMON = HASH + `
 vec3 rdir(float a,float b){float z=a*2.-1.;float r=sqrt(max(0.,1.-z*z));float ph=b*6.2831853;return vec3(r*cos(ph),z,r*sin(ph));}
 vec4 H4(ivec2 id){vec2 q=vec2(id);return vec4(hash(q),hash(q+17.3),hash(q+41.1),hash(q+83.7));}
 vec3 abc(vec3 p){return vec3(sin(p.z)+.43*cos(p.y),.7*sin(p.x)+cos(p.z),.43*sin(p.y)+.7*cos(p.x));}
@@ -13,6 +12,14 @@ const float TL=.42;
 vec3 tiltW(vec3 v){float c=cos(TL),s=sin(TL);return vec3(v.x,v.y*c-v.z*s,v.y*s+v.z*c);}
 vec3 tiltL(vec3 v){float c=cos(TL),s=sin(TL);return vec3(v.x,v.y*c+v.z*s,-v.y*s+v.z*c);}
 float ringA(vec4 h){return 1.35+h.y*.6;}
+// brain: hemisphere centres and radii, and the neuron fibres (quadratic curves between points on the cortex)
+const vec3 BR=vec3(.5,.64,1.);
+vec3 bctr(float sd){return vec3(sd*.28,.06,0.);}
+vec3 bdir(float k,float j){return rdir(.25+.7*hash(vec2(k,j*7.1+1.3)),hash(vec2(k*1.7,j+4.2)));}
+vec3 fibre(float k,float s){float sd=hash(vec2(k,9.))<.5?-1.:1.;vec3 d1=bdir(k,0.);vec3 a,b,c;
+  if(hash(vec2(k,5.))<.5){vec3 d2=normalize(d1+(rdir(hash(vec2(k,2.2)),hash(vec2(k,3.7)))*.7));a=bctr(sd)+d1*BR*.99;b=bctr(sd)+d2*BR*.99;c=bctr(sd)+normalize(d1+d2)*BR*1.05;}
+  else{a=bctr(sd)+d1*BR*.9;b=bctr(-sd)+bdir(k,1.)*BR*.9;c=(a+b)*.2+vec3(0.,.12,0.);}
+  float u=1.-s;return u*u*a+2.*u*s*c+s*s*b;}
 `;
 const NOISE = `vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
 vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
@@ -34,12 +41,19 @@ float sheetY(vec2 q,float t){return .22*sin(q.x*1.3+t*.2)*cos(q.y*1.1-t*.15)+.1*
 `;
 
 // Update: one fragment per particle, MRT out (position+birth, velocity+age).
-export const UPDATE_FS = HDR + `uniform sampler2D uP,uV,uHome;uniform float uT,uDt,uMix,uTurb,uReset,uSing,uKick;uniform int uF0,uF1;uniform vec3 uM;
+export const UPDATE_FS = HDR + `uniform sampler2D uP,uV;uniform float uT,uDt,uMix,uTurb,uReset,uSing,uKick;uniform int uF0,uF1;uniform vec3 uM;
 layout(location=0) out vec4 oP;layout(location=1) out vec4 oV;
 ${COMMON}${NOISE}
 vec3 field(int f,vec3 p,vec3 v,vec4 h,ivec2 id){
-  if(f==0){const float S=.62;vec3 a=vec3(p.x,p.z,p.y)/S+vec3(0.,0.,.45);vec3 d=aiz(a);vec3 fl=vec3(d.x,d.z,d.y)*S*.35;
-    vec3 hm=texelFetch(uHome,id,0).xyz;float settle=uF1==0?smoothstep(.85,1.,uMix):1.;return mix((hm-p)*8.,fl,settle);}
+  // 0: brain (folded cortex on meandering rings, cerebellum, stem, neuron fibres)
+  if(f==0){vec3 tg;float sd=h.w<.5?-1.:1.;
+    if(h.x<.62){vec3 d=rdir(h.y,h.z);
+      if(h.w*2.-floor(h.w*2.)<.72){float j=floor(h.y*26.);float th=h.z*6.2831853;float ph=mix(.2,2.94,(j+.5)/26.)+.14*sin(th*8.+j*2.1)+.06*sin(th*15.+j*.7);d=vec3(sin(ph)*cos(th),sin(ph)*sin(th),cos(ph));d+=rdir(fract(h.w*31.),fract(h.w*17.))*.012;d=normalize(d);}
+      tg=bctr(sd)+d*BR*(1.-.012*fract(h.w*13.));tg.x=sd*max(sd*tg.x,.03);if(tg.y<-.36)tg.y=-.36+(tg.y+.36)*.35;}
+    else if(h.x<.86){float k=floor(h.y*40.);tg=fibre(k,h.z)+rdir(h.w,fract(h.y*57.))*.009;}
+    else if(h.x<.95){vec3 d=rdir(h.y,h.z);tg=vec3(0.,-.44,-.72)+d*vec3(.42,.21,.28)*(1.-.07*abs(sin(d.y*26.))-.04*fract(h.w*7.));}
+    else{float sv=h.y;float an=h.z*6.2831853;float r=.1*(1.-.35*sv)*(1.-.3*fract(h.w*5.));tg=mix(vec3(0.,-.38,-.3),vec3(0.,-1.,-.42),sv)+vec3(cos(an)*r,0.,sin(an)*r);}
+    tg*=1.+.01*sin(uT*1.3);return (tg-p)*7.;}
   if(f==1){vec2 q=p.xz*.75;vec2 c=curl(q,uT*.04)+.45*curl(q*2.6+9.,uT*.07)+vec2(.55,0.);vec3 fl=vec3(c.x*.2,(sheetY(p.xz,uT)-p.y)*3.,c.y*.2);
     vec3 hm=vec3((h.y*2.-1.)*2.4,0.,(h.z*2.-1.)*1.8);hm.y=sheetY(hm.xz,uT);float settle=uF1==1?smoothstep(.85,1.,uMix):1.;return mix((hm-p)*6.,fl,settle);}
   if(f==2){float r=max(length(p.xz),.05);vec3 tn=vec3(-p.z,0.,p.x)/r;vec3 rn=vec3(p.x,0.,p.z)/r;float vk=.95/sqrt(max(r,.25));float inflow=.03+.045/r;float hy=(h.z-.5)*.05*r;return tn*vk-rn*inflow+vec3(0.,(hy-p.y)*4.,0.);}
@@ -96,7 +110,10 @@ export const RENDER_VS = HDR + `uniform sampler2D uP,uV;uniform int uW,uF0,uF1,u
 ${COMMON}
 vec3 colF(int f,vec3 p,vec3 v,vec4 h){
   float sp=length(v);
-  if(f==0){float rr=length(p.xz);vec3 c=mix(vec3(.18,.3,1.),vec3(.5,.82,1.),smoothstep(-.4,.45,p.y));return mix(c,vec3(.82,.96,.35),smoothstep(.2,.04,rr)*.85)*1.4;}
+  if(f==0){
+    if(h.x<.62){float sd=p.x<0.?-1.:1.;vec3 d=normalize((p-bctr(sd))/BR);bool line=h.w*2.-floor(h.w*2.)<.72;float front=smoothstep(.35,-.45,dot(d,uFwd));vec3 c=mix(vec3(.42,.56,1.),vec3(.72,.9,1.),smoothstep(-.35,.55,p.y))*(line?1.:.22)*mix(.22,1.,front);float spark=step(.985,fract(uT*.6+h.w*37.))*step(fract(h.y*91.),.4);return c+vec3(.8,1.,.4)*spark*2.*front;}
+    if(h.x<.86){float k=floor(h.y*40.),ph=hash(vec2(k,3.3));bool surf=hash(vec2(k,5.))<.5;float on=step(fract(uT*.22+ph),.55);float w=fract(h.z-uT*.9-ph*7.);float pulse=on*smoothstep(.86,1.,w);float node=smoothstep(.05,0.,min(h.z,1.-h.z));return vec3(.5,.3,1.)*(surf?.34:.22)+vec3(.78,1.,.45)*pulse*(surf?3.4:2.8)+vec3(.8,.9,1.)*node*1.1;}
+    return mix(vec3(.3,.3,.85),vec3(.5,.7,1.),h.z)*.45;}
   if(f==1){float an=atan(v.z,v.x);vec3 c=mix(vec3(.10,.22,1.),vec3(.45,.82,1.),smoothstep(.1,.5,sp));c=mix(c,vec3(.78,.94,.19),smoothstep(.55,1.,sin(an*2.+p.z*3.)*.5+.5)*.45);float edge=smoothstep(2.6,1.7,abs(p.x))*smoothstep(2.,1.2,abs(p.z));return mix(c,vec3(.55,.3,1.),smoothstep(.3,-.2,p.y)*.35)*.9*edge;}
   if(f==2){float r=length(p.xz);vec3 c=mix(vec3(1.,.9,.72),vec3(1.,.5,.16),smoothstep(.35,1.,r));c=mix(c,vec3(.55,.12,.04),smoothstep(1.1,2.4,r));float be=clamp(dot(v,-uFwd)*.35,-.8,.8);c*=pow(1.+be,3.);c=mix(c,c*vec3(.8,.9,1.25),max(be,0.));return c*.55;}
   if(f==3){if(h.x<.08)return vec3(2.);if(h.x<.2)return vec3(.6,.88,1.)*1.1;if(h.x<.9){float d=length(p);return mix(vec3(.75,.7,1.),vec3(.4,.45,1.),smoothstep(.1,1.2,d))*1.35;}return vec3(.78,.94,.19)*.55;}
@@ -126,7 +143,6 @@ void main(){ivec2 id=ivec2(gl_VertexID%uW,gl_VertexID/uW);vec4 P=texelFetch(uP,i
 
 export const POINT_FS = HDR + 'in vec3 vC;out vec4 o;void main(){o=vec4(vC,1.);}';
 export const FADE_FS = HDR + 'uniform float uF;out vec4 o;void main(){o=vec4(uF);}';
-export const COPY_FS = HDR + 'uniform sampler2D uS;out vec4 o;void main(){o=texelFetch(uS,ivec2(gl_FragCoord.xy),0);}';
 
 // Display: bloom from the mip chain, tone map, nebula dust, stars, vignette, grain, flash pulse.
 export const DISPLAY_FS = HDR + `uniform sampler2D uAcc;uniform vec2 uRes,uSky;uniform float uExp,uT,uBloom,uFlash,uSkyA,uDim;out vec4 o;${HASH}

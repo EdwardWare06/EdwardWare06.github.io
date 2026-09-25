@@ -14,7 +14,7 @@
     {"viewport": [1300, 1000], "js": "window.__stage.setForm(3)", "wait": 4000},
     {"name": "pulsar renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-3-pulsar.png"},
     {"js": "window.__stage.setForm(0)", "wait": 4500},
-    {"name": "attractor renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-0-attractor.png"},
+    {"name": "brain renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-0-brain.png"},
     {"js": "window.__stage.setForm(1)", "wait": 5000},
     {"name": "nebula renders", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "form-1-nebula.png"},
     {"js": "window.__stage.setForm(6)", "wait": 3000},

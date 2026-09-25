@@ -1,6 +1,6 @@
 // The stage: one WebGL2 particle system that changes form. Ported from the approved prototype.
 import { createContext, program, programsDone, checkLinked, texture, framebuffer, accumulation, freeTarget } from './gl.js';
-import { VSQ, UPDATE_FS, RENDER_VS, POINT_FS, FADE_FS, COPY_FS, DISPLAY_FS } from './shaders.js';
+import { VSQ, UPDATE_FS, RENDER_VS, POINT_FS, FADE_FS, DISPLAY_FS } from './shaders.js';
 import { FORM, CAMERA, TRAIL_FADE } from './forms.js';
 import { TIERS, FrameMeter } from './quality.js';
 import { smooth, lerpAngle } from '../lib/math.js';
@@ -27,7 +27,7 @@ export class Stage {
     this.gl = gl; this.canvas = canvas; this.onFlash = onFlash;
     this.progs = {
       upd: program(gl, VSQ, UPDATE_FS), ren: program(gl, RENDER_VS, POINT_FS), fade: program(gl, VSQ, FADE_FS),
-      copy: program(gl, VSQ, COPY_FS), disp: program(gl, VSQ, DISPLAY_FS)
+      disp: program(gl, VSQ, DISPLAY_FS)
     };
     this.ext = gl.getExtension('KHR_parallel_shader_compile');
     this.phase = 'compile'; // compile → prime → warm (see _prepare)
@@ -124,8 +124,8 @@ export class Stage {
   _allocState(cols, rows) {
     const gl = this.gl, n = cols * rows;
     if (this.SP) {
-      [...this.SP, ...this.SV, this.HOME].forEach(t => gl.deleteTexture(t));
-      [...this.SF, this.HOMEF].forEach(f => gl.deleteFramebuffer(f));
+      [...this.SP, ...this.SV].forEach(t => gl.deleteTexture(t));
+      this.SF.forEach(f => gl.deleteFramebuffer(f));
     }
     const P = new Float32Array(n * 4), V = new Float32Array(n * 4);
     for (let i = 0; i < n; i++) {
@@ -136,7 +136,6 @@ export class Stage {
     const tex = data => texture(gl, cols, rows, { internal: gl.RGBA32F, format: gl.RGBA, type: gl.FLOAT, data });
     this.SP = [tex(P), tex(P)]; this.SV = [tex(V), tex(V)];
     this.SF = [framebuffer(gl, [this.SP[0], this.SV[0]]), framebuffer(gl, [this.SP[1], this.SV[1]])];
-    this.HOME = tex(P); this.HOMEF = framebuffer(gl, [this.HOME]);
     this.si = 0; this.cols = cols; this.rows = rows;
   }
 
@@ -194,10 +193,6 @@ export class Stage {
   _prime() {
     const gl = this.gl, P = this.progs, s = this.s;
     this._step(1 / 60, s.t, 1, 0, pulsarAxis(s.t));
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.HOMEF); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
-    gl.useProgram(P.copy.p);
-    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(P.copy.u.uS, 0);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.acc.f); gl.viewport(0, 0, this.W, this.H);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
     gl.useProgram(P.fade.p); gl.uniform1f(P.fade.u.uF, 0);
@@ -217,16 +212,9 @@ export class Stage {
     freeTarget(gl, { t, f });
   }
 
-  // Settle the attractor and keep it as the "home" snapshot, then settle the current form.
+  // Settle the current form before the first frame.
   _warm() {
-    const s = this.s, gl = this.gl, f0 = s.cur;
-    s.cur = s.prev = FORM.ATTRACTOR;
-    this._settle(420, s.t - 240 / 60);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.HOMEF); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
-    gl.useProgram(this.progs.copy.p);
-    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(this.progs.copy.u.uS, 0);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    s.cur = s.prev = f0;
+    const gl = this.gl;
     this._settle(240);
     // The passes above are only queued. Wait for the GPU to run them, so `ready` means the next frame is not stalled.
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.SF[this.si]);
@@ -240,7 +228,6 @@ export class Stage {
     gl.useProgram(U.p);
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(U.u.uP, 0);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.SV[this.si]); gl.uniform1i(U.u.uV, 1);
-    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, this.HOME); gl.uniform1i(U.u.uHome, 2);
     gl.uniform1f(U.u.uT, t); gl.uniform1f(U.u.uDt, dt); gl.uniform1f(U.u.uMix, m); gl.uniform1f(U.u.uTurb, turb);
     gl.uniform1i(U.u.uF0, s.prev); gl.uniform1i(U.u.uF1, s.cur); gl.uniform3fv(U.u.uM, mag);
     gl.uniform1f(U.u.uReset, s.reset ? 1 : 0); gl.uniform1f(U.u.uSing, s.sing); gl.uniform1f(U.u.uKick, s.kick);

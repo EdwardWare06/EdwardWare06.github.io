@@ -5,7 +5,7 @@
   "noExternal": true,
   "steps": [
     { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Outside the work" },
-    { "name": "stage shows the attractor", "js": "window.__stage.form", "expect": 0, "shot": "about-hero.png" },
+    { "name": "stage shows the brain", "js": "window.__stage.form", "expect": 0, "shot": "about-hero.png" },
     { "name": "four sections", "js": "[...document.querySelectorAll('.sec')].map(s => s.dataset.section)", "expect": ["Where I'm from", "Training", "What's next", "Off the clock"] },
     { "name": "the Hercules card sits in the training section", "js": "!!document.querySelector('#training .ccard[data-cons=\"hercules\"]')", "expect": true },
     { "scrollTo": "#training", "wait": 500 },
