@@ -8,6 +8,8 @@
     { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true },
     { "name": "name fits the width", "js": "document.querySelector('.name').getBoundingClientRect().right <= innerWidth", "expect": true },
     { "shot": "home-mobile-hero.png" },
-    { "scrollTo": "#hunt", "wait": 300, "shot": "home-mobile-hunt.png" }
+    { "scrollTo": "#hunt", "wait": 300, "shot": "home-mobile-hunt.png" },
+    { "name": "phone tier", "js": "window.__stage.count", "expect": 65536 },
+    { "name": "stage centred and dimmed behind the text", "js": "[window.__stage.s.offPin, window.__stage.s.dim]", "expect": [0, 0.7] }
   ]
 }

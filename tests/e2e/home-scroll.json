@@ -1,0 +1,25 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 3000,
+  "steps": [
+    { "name": "stage booted", "js": "!!window.__stage && window.__stage.ready", "expect": true },
+    { "name": "hero shows the galaxy", "js": "window.__stage.form", "expect": 4, "shot": "home-hero.png" },
+    { "scrollTo": "#hunt", "wait": 1300, "shot": "home-hunt-mid.png" },
+    { "wait": 1900 },
+    { "name": "Hunt shows the black hole", "js": "window.__stage.form", "expect": 2, "shot": "home-hunt.png" },
+    { "name": "stage moved right for the split", "js": "Math.abs(window.__stage.s.off - 0.44) < 0.02", "expect": true },
+    { "scrollTo": "#voice", "wait": 3200 },
+    { "name": "Voice shows the pulsar", "js": "window.__stage.form", "expect": 3, "shot": "home-voice.png" },
+    { "scrollTo": "#lightning", "wait": 3200 },
+    { "name": "Lightning shows the storm planet", "js": "window.__stage.form", "expect": 5, "shot": "home-lightning.png" },
+    { "scrollTo": "#about", "wait": 3500 },
+    { "name": "About shows the attractor", "js": "window.__stage.form", "expect": 0, "shot": "home-about.png" },
+    { "scrollTo": "#contact", "wait": 1300, "shot": "home-contact-mid.png" },
+    { "wait": 2200 },
+    { "name": "Contact shows the nebula", "js": "window.__stage.form", "expect": 1, "shot": "home-contact.png" },
+    { "name": "form changes flash the name", "js": "Number(document.body.dataset.flashes) >= 5", "expect": true },
+    { "name": "rapid scroll", "js": "new Promise(async r => { for (const id of ['#hunt', '#voice', '#lightning', '#about', '#contact', '#hunt', '#contact']) { document.querySelector(id).scrollIntoView(); await new Promise(q => setTimeout(q, 150)); } setTimeout(() => r(window.__stage.form), 3500); })", "expect": 1 },
+    { "name": "rapid scroll leaves a healthy frame", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "shot": "home-after-rapid-scroll.png" },
+    { "name": "hidden tab pauses and resumes", "js": "(async () => { const s = window.__stage; Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')); const t0 = s.s.t; await new Promise(r => setTimeout(r, 1000)); const paused = s.s.t === t0; Object.defineProperty(document, 'hidden', { configurable: true, get: () => false }); document.dispatchEvent(new Event('visibilitychange')); await new Promise(r => setTimeout(r, 600)); const dt = s.s.t - t0; return paused && dt > 0.1 && dt < 0.9; })()", "expect": true }
+  ]
+}
