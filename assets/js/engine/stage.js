@@ -1,5 +1,5 @@
 // The stage: one WebGL2 particle system that changes form. Ported from the approved prototype.
-import { createContext, program, texture, framebuffer, accumulation, freeTarget } from './gl.js';
+import { createContext, program, programsDone, checkLinked, texture, framebuffer, accumulation, freeTarget } from './gl.js';
 import { VSQ, UPDATE_FS, RENDER_VS, POINT_FS, FADE_FS, COPY_FS, DISPLAY_FS } from './shaders.js';
 import { FORM, CAMERA, TRAIL_FADE } from './forms.js';
 import { TIERS, FrameMeter } from './quality.js';
@@ -29,6 +29,8 @@ export class Stage {
       upd: program(gl, VSQ, UPDATE_FS), ren: program(gl, RENDER_VS, POINT_FS), fade: program(gl, VSQ, FADE_FS),
       copy: program(gl, VSQ, COPY_FS), disp: program(gl, VSQ, DISPLAY_FS)
     };
+    this.ext = gl.getExtension('KHR_parallel_shader_compile');
+    this.phase = 'compile'; // compile → prime → warm (see _prepare)
     this.s = {
       // t starts at 12 s so the warm-up can settle on the times just before it, never below zero
       cur: FORM.GALAXY, prev: FORM.GALAXY, sw: -99, t: 12, yaw: 0.6, pyaw: 0.3,
@@ -162,6 +164,58 @@ export class Stage {
     for (let k = 0; k < n; k++) { const t = upTo - (n - k) / 60; this._step(1 / 60, t, 1, 0, pulsarAxis(t)); }
   }
 
+  // First use of the shaders. A cold shader cache costs seconds: the driver compiles in the background,
+  // then finishes the update shader at its first draw, which a fence reports without blocking.
+  // The page keeps painting throughout; the warm-up runs once both are done.
+  _prepare() {
+    const gl = this.gl, progs = Object.values(this.progs);
+    if (this.phase === 'compile') {
+      if (!programsDone(gl, progs, this.ext)) return false;
+      checkLinked(gl, progs);
+      this._prime();
+      this.fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+      gl.flush();
+      this.phase = 'prime';
+      return false;
+    }
+    if (this.phase === 'prime') {
+      if (gl.getSyncParameter(this.fence, gl.SYNC_STATUS) !== gl.SIGNALED) return false;
+      gl.deleteSync(this.fence);
+      this.fence = null;
+      this.phase = 'warm';
+    }
+    this._warm();
+    return true;
+  }
+
+  // Draw once with every shader into its real target, so the driver finishes compiling all of them.
+  // Zero fade and zero point intensity: nothing is added to the trails.
+  _prime() {
+    const gl = this.gl, P = this.progs, s = this.s;
+    this._step(1 / 60, s.t, 1, 0, pulsarAxis(s.t));
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.HOMEF); gl.viewport(0, 0, this.cols, this.rows); gl.disable(gl.BLEND);
+    gl.useProgram(P.copy.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(P.copy.u.uS, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.acc.f); gl.viewport(0, 0, this.W, this.H);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ZERO, gl.SRC_COLOR);
+    gl.useProgram(P.fade.p); gl.uniform1f(P.fade.u.uF, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.blendFunc(gl.ONE, gl.ONE); gl.useProgram(P.ren.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.SP[this.si]); gl.uniform1i(P.ren.u.uP, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.SV[this.si]); gl.uniform1i(P.ren.u.uV, 1);
+    gl.uniform1i(P.ren.u.uW, this.cols); gl.uniform1f(P.ren.u.uI, 0);
+    gl.drawArrays(gl.POINTS, 0, 1);
+    // the display pass goes to a small offscreen target: a draw to the canvas would make the page wait for it
+    const t = texture(gl, 4, 4, { internal: gl.RGBA8, format: gl.RGBA, type: gl.UNSIGNED_BYTE }), f = framebuffer(gl, [t]);
+    gl.viewport(0, 0, 4, 4); gl.disable(gl.BLEND); gl.useProgram(P.disp.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, this.acc.t); gl.generateMipmap(gl.TEXTURE_2D); gl.uniform1i(P.disp.u.uAcc, 0);
+    gl.uniform2f(P.disp.u.uRes, 4, 4); gl.uniform1f(P.disp.u.uSkyA, 0); gl.uniform1f(P.disp.u.uDim, 0); gl.uniform1f(P.disp.u.uFlash, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    freeTarget(gl, { t, f });
+  }
+
   // Settle the attractor and keep it as the "home" snapshot, then settle the current form.
   _warm() {
     const s = this.s, gl = this.gl, f0 = s.cur;
@@ -204,7 +258,7 @@ export class Stage {
     // rAF can hand a timestamp from before start() or a visibility change; never step backwards
     const dt = Math.max(0, Math.min(0.05, raw)) * this.s.speed;
     this.s.t += dt;
-    if (!this.ready) this._warm();
+    if (!this.ready && !this._prepare()) return;
     this._frame(dt);
   }
 

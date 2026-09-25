@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/tests/pages/stage.html?form=1",
   "settle": 6000,
+  "ready": true,
   "steps": [
     { "js": "(window.__L0 = window.__stage.debugLuma(), window.__L0 > 0.0003)", "expect": true },
     { "viewport": [1300, 940] },

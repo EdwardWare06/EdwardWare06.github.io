@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/tests/pages/stage.html?form=4",
   "settle": 3000,
+  "ready": true,
   "steps": [
     {"name": "warm-up finished", "js": "window.__stage.ready", "expect": true},
     {"name": "desktop particle count", "js": "window.__stage.count", "expect": 262144},

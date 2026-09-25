@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 3000,
+  "ready": true,
   "preload": "window.__flashLog = []; Object.defineProperty(window, '__stage', { configurable: true, get() { return this.__s; }, set(v) { const f = v.onFlash; v.onFlash = (ms, why) => { window.__flashLog.push(why); f(ms, why); }; this.__s = v; } });",
   "steps": [
     { "clickSel": ".rail-tick:nth-of-type(6)", "wait": 4500 },

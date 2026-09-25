@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/tests/pages/stage.html?form=4",
   "settle": 3000,
+  "ready": true,
   "steps": [
     { "name": "galaxy after 40 s", "js": "new Promise(r => setTimeout(() => r((l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())), 40000))", "expect": true, "shot": "soak-4.png" },
     { "js": "window.__stage.setForm(2)" },

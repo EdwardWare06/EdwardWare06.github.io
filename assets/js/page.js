@@ -135,7 +135,9 @@ function watchQuality(stage) {
     stage.meter.reset();
     if (++tries < 3) setTimeout(check, 2500);
   };
-  setTimeout(() => { stage.meter.reset(); setTimeout(check, 2000); }, 1000);
+  // measure only once the stage is drawing: before that, frames are cheap and say nothing
+  const start = () => (stage.ready ? setTimeout(() => { stage.meter.reset(); setTimeout(check, 2000); }, 1000) : requestAnimationFrame(start));
+  start();
 }
 
 // No WebGL2: crossfade pre-rendered stills of each form.

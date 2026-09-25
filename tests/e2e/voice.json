@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/work/voice-recorder/",
   "settle": 3000,
+  "ready": true,
   "noExternal": true,
   "steps": [
     { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Voice Recorder" },

@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 3000,
+  "ready": true,
   "steps": [
     { "name": "stage booted", "js": "!!window.__stage && window.__stage.ready", "expect": true },
     { "name": "hero shows the galaxy", "js": "window.__stage.form", "expect": 4, "shot": "home-hero.png" },

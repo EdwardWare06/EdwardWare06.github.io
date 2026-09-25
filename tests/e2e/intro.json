@@ -8,6 +8,7 @@
     { "name": "scrolling does not cancel or move", "js": "[scrollY, !!document.querySelector('.intro')]", "expect": [0, true] },
     { "key": "PageDown", "wait": 150 },
     { "name": "scroll keys do nothing either", "js": "[scrollY, !!document.querySelector('.intro')]", "expect": [0, true] },
+    { "name": "the countdown waits for the stage", "waitFor": "window.__stage.ready", "js": "[!!document.querySelector('.intro'), window.__stage.form]", "expect": [true, 6] },
     { "name": "detonation switched to the galaxy", "js": "new Promise(r => { const t = performance.now(); (function f() { if (window.__stage.form === 4 || performance.now() - t > 3000) r(window.__stage.form); else requestAnimationFrame(f); })(); })", "expect": 4, "wait": 120, "shot": "intro-boom.png" },
     { "wait": 1400 },
     { "name": "name revealed", "js": "document.body.classList.contains('ih-name')", "expect": false, "shot": "intro-name.png" },

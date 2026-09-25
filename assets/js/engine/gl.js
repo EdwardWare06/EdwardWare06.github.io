@@ -13,11 +13,11 @@ export function stageSupported() {
   return true;
 }
 
+// Compile and link without asking for the result: asking forces the driver to finish at once.
 function shader(gl, type, src) {
   const s = gl.createShader(type);
   gl.shaderSource(s, src);
   gl.compileShader(s);
-  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
   return s;
 }
 
@@ -26,10 +26,22 @@ export function program(gl, vs, fs) {
   gl.attachShader(p, shader(gl, gl.VERTEX_SHADER, vs));
   gl.attachShader(p, shader(gl, gl.FRAGMENT_SHADER, fs));
   gl.linkProgram(p);
-  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
   const cache = {};
   const u = new Proxy(cache, { get: (o, k) => (k in o ? o[k] : (o[k] = gl.getUniformLocation(p, k))) });
   return { p, u };
+}
+
+// With KHR_parallel_shader_compile the driver compiles in the background; this asks without waiting.
+export function programsDone(gl, progs, ext) {
+  return !ext || progs.every(({ p }) => gl.getProgramParameter(p, ext.COMPLETION_STATUS_KHR));
+}
+
+export function checkLinked(gl, progs) {
+  for (const { p } of progs) {
+    if (gl.getProgramParameter(p, gl.LINK_STATUS)) continue;
+    const logs = gl.getAttachedShaders(p).map(s => gl.getShaderInfoLog(s)).filter(Boolean);
+    throw new Error([gl.getProgramInfoLog(p), ...logs].filter(Boolean).join('\n') || 'shader link failed');
+  }
 }
 
 export function texture(gl, w, h, { internal, format, type, data = null, filter }) {

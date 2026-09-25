@@ -1,9 +1,9 @@
 {
   "url": "http://localhost:8080/?nointro",
   "settle": 1000,
-  "preload": "addEventListener('load', () => { (function f() { const t = performance.now(); while (performance.now() - t < 30); requestAnimationFrame(f); })(); });",
+  "preload": "(function wait() { if (window.__stage && window.__stage.ready) (function f() { const t = performance.now(); while (performance.now() - t < 30); requestAnimationFrame(f); })(); else requestAnimationFrame(wait); })();",
   "steps": [
-    { "name": "slow frames step the quality down to low", "js": "new Promise(r => setTimeout(() => r([window.__stage.tier, window.__stage.count]), 10000))", "expect": ["low", 131072], "timeout": 20000 },
-    { "name": "low tier still renders after the downgrade", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "wait": 300, "shot": "quality-adapted.png" }
+    {"name": "slow frames once the stage runs step the quality down to low", "js": "new Promise(r => { const t = performance.now(); (function f() { if (window.__stage.tier === 'low' || performance.now() - t > 16000) r([window.__stage.tier, window.__stage.count]); else setTimeout(f, 250); })(); })", "expect": ["low", 131072], "timeout": 25000},
+    {"name": "low tier still renders after the downgrade", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "wait": 300, "shot": "quality-adapted.png"}
   ]
 }

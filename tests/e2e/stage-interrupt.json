@@ -1,6 +1,7 @@
 {
   "url": "http://localhost:8080/tests/pages/stage.html?form=4",
   "settle": 3000,
+  "ready": true,
   "steps": [
     { "name": "a morph interrupted by a new form keeps the camera and lens continuous", "js": "(async () => { const st = window.__stage, frames = n => new Promise(r => { const f = () => (n-- > 0 ? requestAnimationFrame(f) : r()); f(); }); st.setForm(2); await new Promise(r => setTimeout(r, 1300)); await frames(1); const a = { ...st.cam }; st.setForm(3); await frames(2); const b = st.cam; return [Math.abs(b.pitch - a.pitch) < 0.05, Math.abs(b.dist - a.dist) < 0.05, Math.abs(b.lens - a.lens) < 0.05]; })()", "expect": [true, true, true] },
     { "name": "the new form still arrives", "js": "new Promise(r => setTimeout(() => r([window.__stage.form, Math.round(window.__stage.cam.pitch * 100) / 100]), 3500))", "expect": [3, 0.36] }

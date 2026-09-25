@@ -2,6 +2,7 @@
   "url": "http://localhost:8080/tests/pages/stage.html?form=4&off=0.3",
   "viewport": [1600, 1000],
   "settle": 4500,
+  "ready": true,
   "steps": [
     { "shot": "form-4.webp" },
     { "js": "window.__stage.setForm(2)", "wait": 4500, "shot": "form-2.webp" },

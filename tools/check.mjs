@@ -62,9 +62,16 @@ async function runSpec(file) {
   if (spec.preload) await send('Page.addScriptToEvaluateOnNewDocument', { source: spec.preload });
   await send('Page.navigate', { url: spec.url });
   await sleep(spec.settle ?? 1500);
+  // Poll an expression until it is truthy (the stage compiles for a few seconds on a fresh browser profile).
+  const waitFor = async (expr, ms = 20000) => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < ms) { if (await evaluate(`!!(${expr})`) === true) return true; await sleep(100); }
+    return false;
+  };
+  let failed = 0;
+  if (spec.ready && !(await waitFor('!window.__stage || window.__stage.ready'))) { failed++; console.log('FAIL  stage never became ready'); }
 
   mkdirSync('tests/e2e/out', { recursive: true });
-  let failed = 0;
   for (const [i, st] of (spec.steps || []).entries()) {
     const label = st.name || `step ${i + 1}`;
     if (st.viewport) await send('Emulation.setDeviceMetricsOverride', { width: st.viewport[0], height: st.viewport[1], deviceScaleFactor: 1, mobile: false });
@@ -83,6 +90,7 @@ async function runSpec(file) {
     }
     if (st.wheel) await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: st.wheel[0], y: st.wheel[1], deltaX: 0, deltaY: st.wheel[2] });
     if (st.key) for (const type of ['rawKeyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: st.key, code: st.key === ' ' ? 'Space' : st.key, windowsVirtualKeyCode: KEYCODES[st.key] || 0 });
+    if (st.waitFor && !(await waitFor(st.waitFor, st.timeout))) { failed++; console.log(`FAIL  ${label}: timed out waiting for ${st.waitFor}`); continue; }
     let value;
     if (st.js) value = await evaluate(st.js, st.timeout);
     if (st.wait) await sleep(st.wait);

@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 300,
+  "preload": "const gaps = window.__gaps = []; let last = performance.now(); (function f(now) { if (now - last > 600) gaps.push(Math.round(now - last)); last = now; if (now < 9000) requestAnimationFrame(f); })(last);",
+  "steps": [
+    {"name": "cold shader cache: compile runs in the background; at most one driver freeze under 2.6 s (was 4.4 s)", "js": "new Promise(r => { const t = performance.now(); (function f() { if ((window.__stage && window.__stage.ready) || performance.now() - t > 12000) setTimeout(() => r([window.__gaps.length <= 1 && window.__gaps.every(g => g < 2600), !!(window.__stage && window.__stage.ready)]), 300); else requestAnimationFrame(f); })(); })", "expect": [true, true], "timeout": 20000},
+    {"name": "stage renders once ready", "js": "(l => Number.isFinite(l) && l > 0.0003 && l < 8)(window.__stage.debugLuma())", "expect": true, "wait": 500, "shot": "cold-compile.png"}
+  ]
+}
