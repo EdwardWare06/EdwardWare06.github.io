@@ -1,0 +1,16 @@
+{
+  "url": "http://localhost:8080/tests/pages/stage.html?form=2",
+  "settle": 4000,
+  "ready": true,
+  "steps": [
+    {
+      "name": "black hole: the bent image of the far side is a thin ring on the shadow's edge, not a small ring below the centre; the shadow stays dark",
+      "js": "new Promise(async r => { const S = window.__stage, src = S.canvas, W = innerWidth, H = innerHeight; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d', { willReadFrequently: true }); const th = 0.26 / S.s.zoom * H / 2, cx = (S.s.off + 1) / 2 * W, cy = H / 2; const at = (u, v) => { const d = g.getImageData(Math.round(cx + u * th) - 3, Math.round(cy - v * th) - 3, 7, 7).data; let s = 0; for (let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2]; return s / (d.length / 4) / 3; }; const sum = { ring: 0, fake: 0, shadow: 0 }; for (let k = 0; k < 12; k++) { await new Promise(f => requestAnimationFrame(f)); g.drawImage(src, 0, 0, W, H); sum.ring += (at(-0.89, 0) + at(0.89, 0)) / 2; sum.fake += (at(-0.53, -0.34) + at(0.53, -0.34)) / 2; sum.shadow += at(0, 0.5); await new Promise(f => setTimeout(f, 80)); } r([sum.ring > 2.5 * sum.fake, sum.shadow < 0.25 * sum.ring]); })",
+      "expect": [
+        true,
+        true
+      ],
+      "shot": "black-hole.png"
+    }
+  ]
+}

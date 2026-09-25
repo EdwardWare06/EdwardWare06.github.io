@@ -118,10 +118,12 @@ vec3 colF(int f,vec3 p,vec3 v,vec4 h){
 }
 void main(){ivec2 id=ivec2(gl_VertexID%uW,gl_VertexID/uW);vec4 P=texelFetch(uP,id,0),V=texelFetch(uV,id,0);vec3 p=P.xyz,v=V.xyz;vec4 h=H4(id);
   vec3 q=uR*p;float z=q.z+uDist;gl_PointSize=uPt;vC=vec3(0.);
-  if(z<.2||(uImg==1&&(uLens<.01||q.z<=0.))){gl_Position=vec4(2.,2.,2.,1.);return;}
+  if(z<.2||(uImg==1&&uLens<.01)){gl_Position=vec4(2.,2.,2.,1.);return;}
   vec2 s=q.xy/z*uFoc;float amp=1.;
-  if(uLens>.01&&q.z>0.){float b=length(s)+1e-5;float th=uThE*uLens*sqrt(clamp(q.z/1.2,0.,1.));float root=sqrt(b*b+4.*th*th);
-    if(uImg==0){s*=((b+root)*.5)/b;}else{float bp=(root-b)*.5;s*=-bp/b;amp=.45*clamp(bp/max(b,.02),0.,1.);}}
+  // first image: the far side is pushed outward, over the shadow; second image: a thin ring on the shadow's edge, on the opposite side
+  if(uLens>.01){float b=length(s)+1e-5;float TH=uThE*uLens;
+    if(uImg==0){if(q.z>0.){float th=TH*sqrt(clamp(q.z/.4,0.,1.));s*=((b+sqrt(b*b+4.*th*th))*.5)/b;}}
+    else{float u=(sqrt(b*b+4.*TH*TH)-b)*.5/TH;s*=-TH*(.84+.1*u)/b;amp=.45*u*sqrt(clamp(abs(q.z)/.4,0.,1.))*(q.z>0.?1.:.15);}}
   vec3 c=mix(colF(uF0,p,v,h),colF(uF1,p,v,h),uMix);
   float dep=smoothstep(uDist+3.,uDist-2.,z);
   bool bm=(uF1==3&&h.x>=.08&&h.x<.2);float db=uT-P.w;float fin=(P.w<0.||db<0.)?1.:smoothstep(0.,bm?.06:.5,db);
