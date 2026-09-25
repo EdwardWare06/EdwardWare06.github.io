@@ -10,10 +10,11 @@ import { runIntro, shouldPlayIntro, sessionStore, markIntroSeen } from './intro.
 import { TAIL_RGB } from './engine/forms.js';
 
 const params = new URLSearchParams(location.search);
+const narrow = matchMedia('(max-width: 1023px)');
 export const env = {
   reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
   fine: matchMedia('(pointer: fine)').matches,
-  mobile: matchMedia('(max-width: 1023px)').matches,
+  mobile: narrow.matches, // kept current when the window crosses the breakpoint
   nogl: params.has('nogl'),
   nointro: params.has('nointro'),
   forceIntro: params.has('intro'),
@@ -34,13 +35,19 @@ function flashName(ms) {
   flashTimer = setTimeout(() => document.querySelectorAll('.flash').forEach(el => el.classList.remove('flash')), ms);
 }
 
+// Below 1024 px the stage sits centred and dimmed behind full-width panels.
+function fitStage(stage) {
+  stage.pinOffset(env.mobile ? 0 : null);
+  stage.dim(env.mobile ? 0.7 : 1);
+}
+
 function bootStage() {
   const host = document.querySelector('.stage');
   if (!host || env.nogl || !stageSupported()) return null;
   const tier = env.tier || initialTier({ coarse: !env.fine, width: innerWidth });
   const stage = new Stage(host.querySelector('canvas'), { tier, onFlash: flashName });
   if (env.reduced) stage.motion({ speed: 0.25, cuts: true, reduced: true });
-  if (env.mobile) { stage.pinOffset(0); stage.dim(0.7); }
+  fitStage(stage);
   stage.start();
   window.__stage = stage; // read by the browser checks
   return stage;
@@ -156,9 +163,10 @@ function main() {
   const target = stage || bootFallback();
   const remap = target ? wireMapping(target, pageMapping()) : () => {};
   if (stage) watchQuality(stage);
+  narrow.addEventListener('change', e => { env.mobile = e.matches; if (stage) fitStage(stage); remap(); });
   wireNameSwell();
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[target && target.form >= 0 ? target.form : 4] });
-  initRail({ enabled: env.fine && !env.mobile });
+  initRail({ enabled: env.fine }); // CSS hides it below 1024 px
   wireIntro(stage, remap);
 }
 

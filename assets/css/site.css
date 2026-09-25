@@ -102,8 +102,8 @@ main,.site-footer{position:relative;z-index:1}
 html.cursor-on,html.cursor-on *{cursor:none!important}
 
 /* ---------- trajectory rail (desktop) ---------- */
-html.has-rail{scrollbar-width:none}
-html.has-rail::-webkit-scrollbar{display:none}
+@media (min-width:1024px){html.has-rail{scrollbar-width:none}html.has-rail::-webkit-scrollbar{display:none}}
+@media (max-width:1023px){.rail{display:none}}
 .rail{position:fixed;top:12vh;bottom:12vh;right:18px;width:24px;z-index:15}
 .rail-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(140,170,230,.35) 8%,rgba(140,170,230,.35) 92%,transparent)}
 .rail-tick{position:absolute;left:0;width:24px;height:18px;margin-top:-9px;padding:0;border:0;background:none;cursor:pointer}

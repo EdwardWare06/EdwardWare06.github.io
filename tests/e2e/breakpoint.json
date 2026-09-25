@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 3000,
+  "steps": [
+    { "name": "desktop: stage offset free, full brightness, rail shown", "js": "[window.__stage.s.offPin, window.__stage.s.dim, getComputedStyle(document.querySelector('.rail')).display]", "expect": [null, 1, "block"] },
+    { "viewport": [800, 1000], "wait": 400 },
+    { "name": "narrowed below 1024 px: stage centred and dimmed, rail hidden, scrollbar back", "js": "[window.__stage.s.offPin, window.__stage.s.dim, getComputedStyle(document.querySelector('.rail')).display, getComputedStyle(document.documentElement).scrollbarWidth]", "expect": [0, 0.7, "none", "auto"], "shot": "breakpoint-narrow.png" },
+    { "viewport": [1300, 1000], "wait": 400 },
+    { "name": "widened again: desktop layout returns", "js": "[window.__stage.s.offPin, window.__stage.s.dim, getComputedStyle(document.querySelector('.rail')).display, getComputedStyle(document.documentElement).scrollbarWidth]", "expect": [null, 1, "block", "none"] }
+  ]
+}
