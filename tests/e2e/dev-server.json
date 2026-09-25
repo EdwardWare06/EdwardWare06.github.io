@@ -1,0 +1,7 @@
+{
+  "url": "http://localhost:8080/",
+  "settle": 300,
+  "steps": [
+    { "name": "the dev server makes the browser check every file again, so a new module never meets a stale cached one", "js": "Promise.all(['/', '/assets/css/site.css', '/assets/js/page.js', '/assets/js/engine/shaders.js'].map(u => fetch(u, { cache: 'no-store' }).then(r => r.headers.get('cache-control')))).then(a => a.every(h => h === 'no-cache'))", "expect": true }
+  ]
+}
