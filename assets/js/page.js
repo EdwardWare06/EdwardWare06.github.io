@@ -177,6 +177,8 @@ function main() {
   const target = stage || bootFallback();
   const remap = target ? wireMapping(target, pageMapping()) : () => {};
   if (stage) watchQuality(stage);
+  // Phones run one WebGL scene at a time: the stage waits while a heavy demo is on screen.
+  addEventListener('ew-heavy', e => { if (stage && stage.tier === 'mobile') (e.detail ? stage.stop() : stage.start()); });
   narrow.addEventListener('change', e => { env.mobile = e.matches; if (stage) fitStage(stage); remap(); });
   wireNameSwell();
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[target && target.form >= 0 ? target.form : 4] });

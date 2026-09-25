@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lightning Background — Edward Ware</title>
+<meta name="description" content="A procedural lightning storm that runs as a live Windows wallpaper behind the desktop icons. Built by Edward Ware with C#, WebView2 and WebGL2.">
+<link rel="canonical" href="https://edwardware06.github.io/work/lightning/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Edward Ware">
+<meta property="og:title" content="Lightning Background — Edward Ware">
+<meta property="og:description" content="A procedural lightning storm that runs as a live Windows wallpaper behind the desktop icons. Built by Edward Ware with C#, WebView2 and WebGL2.">
+<meta property="og:url" content="https://edwardware06.github.io/work/lightning/">
+<meta property="og:image" content="https://edwardware06.github.io/assets/img/og-galaxy.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Edward Ware's name over a spiral galaxy made of particles.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#020308">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css">
+<script type="module" src="/assets/js/page.js"></script>
+<script type="module" src="/assets/js/demos/lightning-frame.js"></script>
+</head>
+<body data-page="project" data-form="storm-planet">
+<a class="skip-link" href="#what">Skip to the project</a>
+<div class="stage" aria-hidden="true"><canvas></canvas></div>
+<main>
+  <header class="hero project-hero" data-section="Lightning Background">
+    <nav class="nav label" aria-label="Main">
+      <a class="home" href="/">E · W</a><a href="/#work">WORK</a><a href="/about/">ABOUT</a><a href="/timeline/">TIMELINE</a><a href="/resume/">RESUME</a>
+    </nav>
+    <div class="hero-block">
+      <p class="label kicker">FIG. 03 — GRAPHICS</p>
+      <h1 class="display title">Lightning Background</h1>
+      <p class="lede">A procedural lightning storm that runs as a live Windows wallpaper, behind the desktop icons. Every bolt is generated at runtime, so the storm never repeats.</p>
+      <div class="cta"><a class="back label" href="/#lightning">← BACK TO THE WORK</a></div>
+    </div>
+    <p class="label cue" aria-hidden="true">SCROLL ↓</p>
+  </header>
+
+  <div class="split">
+    <div class="col">
+      <section class="sec" id="what" data-section="What it is" aria-labelledby="h-what">
+        <p class="label fig">01 — WHAT IT IS</p>
+        <h2 class="display" id="h-what">What it is</h2>
+        <p>An animated desktop wallpaper for Windows 11. A small C# shell puts a window into Explorer's wallpaper layer, so the storm sits behind the icons. It starts at login and pauses itself when nobody can see it.</p>
+        <p>Nothing is pre-rendered. Each bolt grows from a seed while the wallpaper runs, so the storm never loops.</p>
+      </section>
+
+      <section class="sec" id="how" data-section="How it works" aria-labelledby="h-how">
+        <p class="label fig">02 — HOW IT WORKS</p>
+        <h2 class="display" id="h-how">How it works</h2>
+        <ol class="pipeline">
+          <li><b>Shell</b><span>a small C# app starts at login and lives in the tray</span></li>
+          <li><b>Attach</b><span>its window joins Explorer's wallpaper layer, behind the icons</span></li>
+          <li><b>Input</b><span>the window never takes focus; the shell reads the cursor and clicks at 30 Hz</span></li>
+          <li><b>Scene</b><span>WebView2 runs the WebGL2 storm</span></li>
+          <li><b>Generate</b><span>each channel is midpoint displacement, with branches that thin out with depth</span></li>
+          <li><b>Draw</b><span>ground, reflections, bolts and sparks, then bloom and afterglow</span></li>
+          <li><b>Strike</b><span>a click on the desktop drives a bolt into that spot</span></li>
+          <li><b>Pause</b><span>on battery, in fullscreen apps, when a window covers the desktop, and when locked</span></li>
+        </ol>
+      </section>
+
+      <section class="sec" id="demo" data-section="Live demo" aria-labelledby="h-demo">
+        <p class="label fig">03 — LIVE DEMO</p>
+        <h2 class="display" id="h-demo">The real storm</h2>
+        <p>This is the wallpaper's own scene, running in the page. Click inside the frame and a bolt strikes that spot.</p>
+        <div class="storm" id="storm-demo">
+          <button type="button" class="btn demo-run"><span>RUN THE STORM ▸</span></button>
+        </div>
+        <p class="label storm-note">BRIGHT FLASHES · STRIKES LIMITED TO TWO PER SECOND</p>
+      </section>
+
+      <section class="sec" id="numbers" data-section="Numbers" aria-labelledby="h-numbers">
+        <p class="label fig">04 — NUMBERS</p>
+        <h2 class="display" id="h-numbers">Numbers</h2>
+        <dl class="spec">
+          <div><dt>CPU</dt><dd>~0.3 % of one core</dd></div>
+          <div><dt>GPU</dt><dd>~12 % average, ~30 % during a strike</dd></div>
+          <div><dt>RAM</dt><dd>~430 MB, mostly the WebView2 floor; the scene holds ~2 MB</dd></div>
+          <div><dt>DRAWS</dt><dd>~10 per frame</dd></div>
+          <div><dt>CLICKS</dt><dd>at least 60 ms apart, at most 8 a second</dd></div>
+        </dl>
+        <p class="label storm-note">MEASURED ON A LAPTOP WITH AN RTX 4050 AT 1920×1080</p>
+      </section>
+
+      <section class="sec" id="stack" data-section="Stack" aria-labelledby="h-stack">
+        <p class="label fig">05 — STACK</p>
+        <h2 class="display" id="h-stack">Stack</h2>
+        <dl class="spec">
+          <div><dt>SHELL</dt><dd>C# · .NET 6 · WinForms</dd></div>
+          <div><dt>HOST</dt><dd>WebView2</dd></div>
+          <div><dt>SCENE</dt><dd>WebGL2 · ES modules, no libraries</dd></div>
+          <div><dt>TESTS</dt><dd>node:test, seeded and headless</dd></div>
+        </dl>
+        <a class="next label" href="/work/hunt/">NEXT · HUNT / LASALLE →</a>
+      </section>
+    </div>
+    <div class="split-stage" aria-hidden="true"></div>
+  </div>
+</main>
+<footer class="site-footer label"><span>EDWARD WARE · RUSTON, LA</span></footer>
+</body>
+</html>

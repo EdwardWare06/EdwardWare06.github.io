@@ -5,7 +5,7 @@ import { posix } from 'node:path';
 
 const SITE = 'https://edwardware06.github.io';
 // Paths plan 2 has not built yet. Each page task deletes its entries; Task 9 checks the set is empty.
-const PLANNED = new Set(['/work/lightning/', '/about/', '/timeline/', '/resume/', '/resume/Edward-Ware-Resume.pdf']);
+const PLANNED = new Set(['/about/', '/timeline/', '/resume/', '/resume/Edward-Ware-Resume.pdf']);
 const SKIP_DIRS = new Set(['.git', '.superpowers', 'node_modules', 'docs', 'tests', 'tools']);
 
 function htmlFiles(dir = '.') {

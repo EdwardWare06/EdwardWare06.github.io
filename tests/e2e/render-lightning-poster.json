@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/work/lightning/demo/index.html",
+  "viewport": [1280, 800],
+  "settle": 2500,
+  "steps": [
+    { "js": "(window.LBG.reseed(20260925), true)", "wait": 3500 },
+    { "js": "(window.LBG.strike(0.15, -0.2), true)", "wait": 200, "shot": "lightning-poster-a.webp" },
+    { "wait": 150, "shot": "lightning-poster-b.webp" },
+    { "wait": 150, "shot": "lightning-poster-c.webp" }
+  ]
+}

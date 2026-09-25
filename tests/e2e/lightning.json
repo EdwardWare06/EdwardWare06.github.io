@@ -1,0 +1,24 @@
+{
+  "url": "http://localhost:8080/work/lightning/",
+  "settle": 2500,
+  "ready": true,
+  "noExternal": true,
+  "steps": [
+    { "name": "title", "js": "document.querySelector('h1').textContent", "expect": "Lightning Background" },
+    { "name": "stage shows the storm planet", "js": "window.__stage.form", "expect": 5, "shot": "lightning-hero.png" },
+    { "scrollTo": "#demo", "wait": 600 },
+    { "name": "the scene waits for a click", "js": "[!!document.querySelector('#storm-demo iframe'), document.querySelector('.demo-run').hidden]", "expect": [false, false], "shot": "lightning-demo-poster.png" },
+    { "clickSel": ".demo-run", "waitFor": "(f => f && f.contentWindow.LBG && f.contentWindow.LBG.scene && f.contentWindow.LBG.scene.running)(document.querySelector('#storm-demo iframe'))", "timeout": 15000 },
+    { "name": "the real scene runs in the frame", "js": "new Promise(r => setTimeout(() => r(document.querySelector('#storm-demo iframe').contentWindow.LBG.stats().fps > 20), 2000))", "expect": true },
+    { "clickSel": "#storm-demo iframe", "wait": 100 },
+    { "clickSel": "#storm-demo iframe", "wait": 700 },
+    { "name": "a click strikes; a second click within 0.5 s is ignored", "js": "document.querySelector('#storm-demo iframe').contentWindow.__strikes", "expect": 1, "shot": "lightning-strike.png" },
+    { "scrollTo": "#stack", "wait": 900 },
+    { "name": "scrolled away, the scene pauses", "js": "document.querySelector('#storm-demo iframe').contentWindow.LBG.scene.running", "expect": false },
+    { "scrollTo": "#demo", "wait": 900 },
+    { "name": "back in view, it runs again", "js": "document.querySelector('#storm-demo iframe').contentWindow.LBG.scene.running", "expect": true },
+    { "name": "on desktop the stage keeps running beside the demo", "js": "window.__stage.running", "expect": true },
+    { "name": "next project link", "js": "document.querySelector('a.next').getAttribute('href')", "expect": "/work/hunt/" },
+    { "name": "no horizontal scroll", "js": "document.documentElement.scrollWidth <= innerWidth", "expect": true }
+  ]
+}

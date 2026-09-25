@@ -1,0 +1,17 @@
+{
+  "url": "http://localhost:8080/work/lightning/",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "ready": true,
+  "steps": [
+    { "name": "no horizontal scroll on a phone", "js": "document.documentElement.scrollWidth <= screen.width", "expect": true },
+    { "name": "the long title fits a phone", "js": "document.querySelector('h1').getBoundingClientRect().right <= screen.width", "expect": true },
+    { "scrollTo": "#demo", "wait": 500 },
+    { "name": "the demo fits the width", "js": "document.querySelector('#storm-demo').getBoundingClientRect().right <= innerWidth", "expect": true },
+    { "clickSel": ".demo-run", "waitFor": "(f => f && f.contentWindow.LBG && f.contentWindow.LBG.scene && f.contentWindow.LBG.scene.running)(document.querySelector('#storm-demo iframe'))", "timeout": 15000 },
+    { "name": "a phone runs one scene at a time: the stage waits", "js": "new Promise(r => setTimeout(() => r(window.__stage.running), 300))", "expect": false, "shot": "lightning-mobile-demo.png" },
+    { "scrollTo": "#stack", "wait": 900 },
+    { "name": "demo off screen: the stage runs again", "js": "window.__stage.running", "expect": true }
+  ]
+}
