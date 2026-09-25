@@ -4,7 +4,7 @@ import { decode } from './lib/decode.js';
 import { CONSTELLATIONS } from './constellations.js';
 
 export function initDetails({ fine = true, reduced = false, tail = () => '255,228,190' } = {}) {
-  const state = { orbit: null, mag: false, dims: 0, cards: 0 };
+  const state = { orbit: null, mag: false, dims: 0, dimsBelow: 0, cards: 0 };
   window.__details = { state }; // read by the browser checks
 
   // signal: nav labels and contact links resolve from static on hover and on keyboard focus
@@ -68,18 +68,28 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
   const rr = (x, y, w, h, r) => { X.beginPath(); X.moveTo(x + r, y); X.arcTo(x + w, y, x + w, y + h, r); X.arcTo(x + w, y + h, x, y + h, r); X.arcTo(x, y + h, x, y, r); X.arcTo(x, y, x + w, y, r); X.closePath(); };
   const arrow = (x, y, ang, sz) => { X.beginPath(); X.moveTo(x, y); X.lineTo(x - Math.cos(ang - 0.4) * sz, y - Math.sin(ang - 0.4) * sz); X.lineTo(x - Math.cos(ang + 0.4) * sz, y - Math.sin(ang + 0.4) * sz); X.closePath(); X.fill(); };
 
+  // The width line sits 12 px above a block, unless something already occupies that band
+  // (in Contact the EMAIL ME button sits right above the CODE row); then it goes below.
+  const bandTaken = (el, r) => [0.08, 0.5, 0.92].some(f => {
+    const hit = document.elementFromPoint(r.left + r.width * f, r.top - 12);
+    return hit && !hit.contains(el) && !el.contains(hit);
+  });
+
   function drawDimensions(dt) {
-    let active = 0;
+    let active = 0, below = 0;
     for (const s of specs) {
       s.p = reduced ? (s.on ? 1 : 0) : Math.max(0, Math.min(1, s.p + (s.on ? dt * 3 : -dt * 4)));
       if (s.p <= 0) continue;
       active++;
       const r = s.el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) continue;
-      const p = 1 - Math.pow(1 - s.p, 3), al = Math.min(1, s.p * 1.5), ty = r.top - 12, rx = r.right + 12, cxm = (r.left + r.right) / 2, cym = (r.top + r.bottom) / 2;
+      const under = bandTaken(s.el, r);
+      if (under) below++;
+      const edge = under ? r.bottom + 3 : r.top - 3, ty = under ? r.bottom + 12 : r.top - 12, tip = under ? ty + 5 : ty - 5;
+      const p = 1 - Math.pow(1 - s.p, 3), al = Math.min(1, s.p * 1.5), rx = r.right + 12, cxm = (r.left + r.right) / 2, cym = (r.top + r.bottom) / 2;
       X.strokeStyle = `rgba(200,240,49,${0.8 * al})`; X.fillStyle = `rgba(200,240,49,${0.9 * al})`; X.lineWidth = 1;
       X.beginPath();
-      X.moveTo(r.left, r.top - 3); X.lineTo(r.left, ty - 5); X.moveTo(r.right, r.top - 3); X.lineTo(r.right, ty - 5);
+      X.moveTo(r.left, edge); X.lineTo(r.left, tip); X.moveTo(r.right, edge); X.lineTo(r.right, tip);
       X.moveTo(r.right + 3, r.top); X.lineTo(rx + 5, r.top); X.moveTo(r.right + 3, r.bottom); X.lineTo(rx + 5, r.bottom);
       X.stroke();
       const hw = (r.width / 2) * p, hh = (r.height / 2) * p;
@@ -95,6 +105,7 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
       X.restore(); X.textAlign = 'left';
     }
     state.dims = active;
+    state.dimsBelow = below;
   }
 
   function drawCursor(dt) {
