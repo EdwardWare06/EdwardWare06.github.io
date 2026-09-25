@@ -1,0 +1,5 @@
+.superpowers/
+tests/e2e/out/
+node_modules/
+*.pdf
+!resume/Edward-Ware-Resume.pdf

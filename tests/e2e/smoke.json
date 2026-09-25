@@ -1,0 +1,7 @@
+{
+  "url": "http://localhost:8080/",
+  "noExternal": true,
+  "steps": [
+    { "name": "home page title", "js": "document.title", "expect": "Edward Ware" }
+  ]
+}

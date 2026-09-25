@@ -1,0 +1,10 @@
+{
+  "name": "edwardware06.github.io",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"tests/unit/*.test.js\"",
+    "serve": "sh tools/serve.sh",
+    "e2e": "sh tools/e2e.sh"
+  }
+}
