@@ -259,3 +259,9 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
 .lost-flash{position:fixed;inset:0;z-index:30;background:#ebf4ff;opacity:0;pointer-events:none}
 .lost-flash.go{animation:introflash .55s ease-out forwards}
 @media (max-width:1023px){.lost-hud .tr,.lost-hud .br{display:none}}
+
+/* phones: the stage sits centred behind the hero text, so it gets a dark field; spec labels use --muted (spec §8) */
+@media (max-width:1023px){
+  .hero-block,.lost-msg{background:rgba(2,3,8,.7);box-shadow:0 0 70px 50px rgba(2,3,8,.7);border-radius:24px}
+  .spec dt{color:var(--muted)}
+}
