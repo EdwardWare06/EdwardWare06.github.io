@@ -100,3 +100,17 @@ main,.site-footer{position:relative;z-index:1}
 /* ---------- details overlay (dimension lines, comet cursor) ---------- */
 .fx-overlay{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:40}
 html.cursor-on,html.cursor-on *{cursor:none!important}
+
+/* ---------- trajectory rail (desktop) ---------- */
+html.has-rail{scrollbar-width:none}
+html.has-rail::-webkit-scrollbar{display:none}
+.rail{position:fixed;top:12vh;bottom:12vh;right:18px;width:24px;z-index:15}
+.rail-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(transparent,rgba(140,170,230,.35) 8%,rgba(140,170,230,.35) 92%,transparent)}
+.rail-tick{position:absolute;left:0;width:24px;height:18px;margin-top:-9px;padding:0;border:0;background:none;cursor:pointer}
+.rail-tick::before{content:"";position:absolute;left:50%;top:50%;width:9px;height:1px;background:rgba(159,180,214,.6);transform:translate(-50%,-50%);transition:width .3s,background .3s}
+.rail-tick.on::before,.rail-tick:hover::before,.rail-tick:focus-visible::before{width:15px;background:var(--lime)}
+.rail-label{position:absolute;right:30px;top:50%;transform:translate(6px,-50%);white-space:nowrap;font:500 .66rem var(--mono);letter-spacing:.14em;color:var(--soft);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;text-shadow:0 0 6px #000}
+.rail:hover .rail-label,.rail-tick:focus-visible .rail-label{opacity:1;transform:translate(0,-50%)}
+.rail-comet{position:absolute;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px rgba(124,196,255,.8)}
+.rail-comet::before{content:"";position:absolute;left:50%;bottom:50%;width:1px;height:calc(6px + var(--v,0) * 48px);transform:translateX(-50%);background:linear-gradient(transparent,rgba(124,196,255,.85))}
+.rail.up .rail-comet::before{bottom:auto;top:50%;background:linear-gradient(rgba(124,196,255,.85),transparent)}

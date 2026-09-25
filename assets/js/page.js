@@ -5,6 +5,7 @@ import { HOME_MAPPING, formFromName } from './engine/forms.js';
 import { initialTier } from './engine/quality.js';
 import { activeIndex, splitProgress, stageLayout } from './scroll-map.js';
 import { initDetails } from './details.js';
+import { initRail } from './rail.js';
 import { TAIL_RGB } from './engine/forms.js';
 
 const params = new URLSearchParams(location.search);
@@ -106,6 +107,7 @@ function main() {
   if (stage) wireMapping(stage, pageMapping());
   wireNameSwell();
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[stage ? stage.form : 4] });
+  initRail({ enabled: env.fine && !env.mobile });
 }
 
 main();

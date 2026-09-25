@@ -1,0 +1,14 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 2000,
+  "steps": [
+    { "name": "rail replaces the scrollbar", "js": "[!!document.querySelector('.rail'), document.documentElement.classList.contains('has-rail')]", "expect": [true, true] },
+    { "name": "one tick per section", "js": "document.querySelectorAll('.rail-tick').length", "expect": 6 },
+    { "clickSel": ".rail-tick:nth-of-type(3)", "wait": 1500 },
+    { "name": "clicking a tick scrolls to its section", "js": "Math.abs(document.querySelector('#voice').getBoundingClientRect().top) < 4", "expect": true },
+    { "name": "active tick follows the scroll", "js": "document.querySelector('.rail-tick.on').textContent", "expect": "FIG. 02 · Voice Recorder", "shot": "rail.png" },
+    { "js": "(document.querySelectorAll('.rail-tick')[3].focus(), true)", "wait": 100 },
+    { "key": "Tab", "wait": 200 },
+    { "name": "rail ticks are focusable with a visible ring", "js": "[document.activeElement.className, getComputedStyle(document.activeElement).outlineStyle]", "expect": ["rail-tick", "solid"] }
+  ]
+}
