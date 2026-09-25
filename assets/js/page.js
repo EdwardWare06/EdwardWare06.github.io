@@ -53,7 +53,8 @@ function wireMapping(target, mapping) {
   const update = () => {
     const vh = innerHeight;
     const idx = activeIndex(secs.map(el => el.getBoundingClientRect().top), vh);
-    if (idx !== active) {
+    // While the intro runs it owns the stage; the mapping catches up when the intro ends.
+    if (idx !== active && !document.documentElement.classList.contains('intro-lock')) {
       active = idx;
       document.body.dataset.active = String(idx);
       target.setForm(mapping[Math.min(idx, mapping.length - 1)]);
@@ -66,6 +67,7 @@ function wireMapping(target, mapping) {
   addEventListener('scroll', update, { passive: true });
   addEventListener('resize', update);
   update();
+  return update;
 }
 
 // Hero name: letters get wider and heavier near the cursor.
@@ -137,25 +139,25 @@ function bootFallback() {
 }
 
 // Home only: the intro on the first visit per session, and the footer's "Replay intro".
-function wireIntro(stage) {
+function wireIntro(stage, remap) {
   const replay = document.querySelector('.replay-intro');
   if (!stage || env.reduced) { if (replay) replay.hidden = true; return; } // reduce motion: never an intro
   if (document.body.dataset.page !== 'home') return;
   if (shouldPlayIntro({ storage: sessionStore(), reduced: env.reduced, hash: location.hash, forced: env.forceIntro, disabled: env.nointro })) {
-    runIntro(stage, { flash: flashName });
+    runIntro(stage, { flash: flashName }).finished.then(remap);
   }
-  replay?.addEventListener('click', () => runIntro(stage, { flash: flashName }));
+  replay?.addEventListener('click', () => runIntro(stage, { flash: flashName }).finished.then(remap));
 }
 
 function main() {
   const stage = bootStage();
   const target = stage || bootFallback();
-  if (target) wireMapping(target, pageMapping());
+  const remap = target ? wireMapping(target, pageMapping()) : () => {};
   if (stage) watchQuality(stage);
   wireNameSwell();
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[target && target.form >= 0 ? target.form : 4] });
   initRail({ enabled: env.fine && !env.mobile });
-  wireIntro(stage);
+  wireIntro(stage, remap);
 }
 
 main();

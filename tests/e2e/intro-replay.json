@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/?nointro",
+  "settle": 3000,
+  "steps": [
+    { "scrollTo": ".site-footer", "wait": 3500 },
+    { "name": "at the bottom the stage shows the nebula", "js": "window.__stage.form", "expect": 1 },
+    { "clickSel": ".replay-intro", "wait": 800 },
+    { "name": "replay holds the singularity during the countdown", "js": "[window.__stage.s.prev, window.__stage.form, scrollY]", "expect": [6, 6, 0], "shot": "intro-replay-point.png" },
+    { "name": "replay ends on the galaxy hero", "js": "new Promise(r => { const t = performance.now(); (function f() { if (!document.querySelector('.intro') || performance.now() - t > 9000) r([!!document.querySelector('.intro'), window.__stage.form, document.body.dataset.active]); else requestAnimationFrame(f); })(); })", "expect": [false, 4, "0"], "timeout": 15000 }
+  ]
+}
