@@ -10,6 +10,7 @@
     { "name": "four constellation cards", "js": "[...document.querySelectorAll('.ccard')].map(c => c.dataset.cons)", "expect": ["dipper", "lyra", "aquila", "hercules"] },
     { "name": "magnet buttons", "js": "[...document.querySelectorAll('[data-mag]')].map(b => b.textContent.trim())", "expect": ["RESUME ↓", "EMAIL ME →"] },
     { "name": "no prices in the copy", "js": "!/\\$\\s?\\d/.test(document.body.textContent)", "expect": true },
-    { "scrollTo": "#voice", "wait": 400, "shot": "home-voice-static.png" }
+    { "scrollTo": "#voice", "wait": 400, "shot": "home-voice-static.png" },
+    { "name": "dim text meets WCAG AA on the sky (4.5:1)", "js": "(() => { const lum = c => { const [r, g, b] = c.match(/[\\d.]+/g).slice(0, 3).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }; const probe = document.createElement('span'); probe.style.color = 'var(--dim)'; document.body.appendChild(probe); const dim = lum(getComputedStyle(probe).color); probe.remove(); const bg = lum('rgb(2,3,8)'); return [dim, lum(getComputedStyle(document.querySelector('.site-footer')).color)].map(L => (L + 0.05) / (bg + 0.05) >= 4.5); })()", "expect": [true, true] }
   ]
 }

@@ -5,7 +5,7 @@
 
 /* ---------- tokens ---------- */
 :root{
-  --sky:#020308;--ink:#eaf2ff;--body:#c9d4e6;--muted:#8a9ab8;--soft:#9fb4d6;--dim:#56657f;
+  --sky:#020308;--ink:#eaf2ff;--body:#c9d4e6;--muted:#8a9ab8;--soft:#9fb4d6;--dim:#6f82a3;
   --blue:#7cc4ff;--lime:#c8f031;--line:rgba(140,170,230,.18);--panel:rgba(3,5,11,.93);
   --display:'Archivo','Arial Narrow',sans-serif;--mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
   --glow:0 0 .25em rgba(120,180,255,.35);
