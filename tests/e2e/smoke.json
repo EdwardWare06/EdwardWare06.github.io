@@ -2,6 +2,19 @@
   "url": "http://localhost:8080/",
   "noExternal": true,
   "steps": [
-    { "name": "home page title", "js": "document.title", "expect": "Edward Ware" }
+    {
+      "name": "home page title",
+      "js": "document.title",
+      "expect": "Edward Ware"
+    },
+    {
+      "name": "scripts load through versioned URLs, so an update never mixes new and cached modules",
+      "js": "(() => { const js = performance.getEntriesByType('resource').map(e => new URL(e.name)).filter(u => u.pathname.startsWith('/assets/js/')); return [js.length > 5, js.every(u => /^\\?v=[0-9a-f]{10}$/.test(u.search)), js.some(u => u.pathname === '/assets/js/engine/shaders.js')]; })()",
+      "expect": [
+        true,
+        true,
+        true
+      ]
+    }
   ]
 }

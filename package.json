@@ -6,6 +6,7 @@
     "test": "node --test \"tests/unit/*.test.js\"",
     "serve": "sh tools/serve.sh",
     "e2e": "sh tools/e2e.sh",
-    "resume-pdf": "sh tools/resume-pdf.sh"
+    "resume-pdf": "sh tools/resume-pdf.sh",
+    "stamp": "node tools/stamp.mjs"
   }
 }

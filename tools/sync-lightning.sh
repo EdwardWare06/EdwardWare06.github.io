@@ -14,3 +14,5 @@ sed -i 's#<title>Lightning Background</title>#<title>Lightning Background</title
 grep -q 'lightning-adapter.js' "$DEST.tmp/index.html" || { echo "adapter hook failed" >&2; exit 1; }
 rm -rf "$DEST" && mv "$DEST.tmp" "$DEST"
 echo "synced $(find "$DEST" -name '*.js' | wc -l) modules into $DEST"
+# new scene files change the versions in the pages
+node tools/stamp.mjs
