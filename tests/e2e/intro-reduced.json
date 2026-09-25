@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:8080/",
+  "media": { "prefers-reduced-motion": "reduce" },
+  "settle": 1500,
+  "steps": [
+    { "name": "reduce motion: no intro", "js": "!!document.querySelector('.intro')", "expect": false },
+    { "name": "reduce motion: no replay button", "js": "document.querySelector('.replay-intro').hidden", "expect": true }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "url": "http://localhost:8080/",
+  "settle": 700,
+  "steps": [
+    { "name": "intro overlay up, scroll locked", "js": "[!!document.querySelector('.intro'), document.documentElement.classList.contains('intro-lock')]", "expect": [true, true] },
+    { "name": "stage packed into one point", "js": "window.__stage.form", "expect": 6, "shot": "intro-point.png" },
+    { "wheel": [650, 500, 900], "wait": 150 },
+    { "name": "scrolling does not cancel or move", "js": "[scrollY, !!document.querySelector('.intro')]", "expect": [0, true] },
+    { "key": "PageDown", "wait": 150 },
+    { "name": "scroll keys do nothing either", "js": "[scrollY, !!document.querySelector('.intro')]", "expect": [0, true] },
+    { "name": "detonation switched to the galaxy", "js": "new Promise(r => { const t = performance.now(); (function f() { if (window.__stage.form === 4 || performance.now() - t > 3000) r(window.__stage.form); else requestAnimationFrame(f); })(); })", "expect": 4, "wait": 120, "shot": "intro-boom.png" },
+    { "wait": 1400 },
+    { "name": "name revealed", "js": "document.body.classList.contains('ih-name')", "expect": false, "shot": "intro-name.png" },
+    { "wait": 2600 },
+    { "name": "intro finished and remembered", "js": "[!!document.querySelector('.intro'), document.documentElement.classList.contains('intro-lock'), sessionStorage.getItem('ew-intro-seen')]", "expect": [false, false, "1"], "shot": "intro-end.png" },
+    { "js": "(location.reload(), true)", "wait": 2500 },
+    { "name": "a reload in the same session skips it", "js": "!!document.querySelector('.intro')", "expect": false }
+  ]
+}

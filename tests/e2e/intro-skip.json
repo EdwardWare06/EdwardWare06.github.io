@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/",
+  "settle": 1200,
+  "steps": [
+    { "key": "Escape", "wait": 800 },
+    { "name": "Esc skips to the end state", "js": "[!!document.querySelector('.intro'), document.body.classList.contains('ih-name'), window.__stage.form]", "expect": [false, false, 4], "shot": "intro-skipped.png" }
+  ]
+}

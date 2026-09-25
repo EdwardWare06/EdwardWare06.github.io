@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/#work",
+  "settle": 2000,
+  "steps": [
+    { "name": "deep link: no intro, no lock", "js": "[!!document.querySelector('.intro'), document.documentElement.classList.contains('intro-lock')]", "expect": [false, false] },
+    { "name": "opened at the anchor", "js": "scrollY > 100", "expect": true }
+  ]
+}

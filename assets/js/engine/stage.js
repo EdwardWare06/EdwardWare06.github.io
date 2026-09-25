@@ -142,6 +142,9 @@ export class Stage {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     s.cur = s.prev = f0;
     for (let k = 0; k < 240; k++) this._step(1 / 60, k / 60, 1, 0, [0, 1, 0]);
+    // The passes above are only queued. Wait for the GPU to run them, so `ready` means the next frame is not stalled.
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.SF[this.si]);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, new Float32Array(4));
     this.ready = true;
   }
 

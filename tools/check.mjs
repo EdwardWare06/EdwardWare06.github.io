@@ -59,6 +59,7 @@ async function runSpec(file) {
   await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: spec.dpr || 1, mobile: !!spec.mobile });
   if (spec.touch) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
   if (spec.media) await send('Emulation.setEmulatedMedia', { features: Object.entries(spec.media).map(([name, value]) => ({ name, value })) });
+  if (spec.preload) await send('Page.addScriptToEvaluateOnNewDocument', { source: spec.preload });
   await send('Page.navigate', { url: spec.url });
   await sleep(spec.settle ?? 1500);
 

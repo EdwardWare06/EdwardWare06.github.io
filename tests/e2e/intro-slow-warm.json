@@ -1,0 +1,8 @@
+{
+  "url": "http://localhost:8080/",
+  "settle": 500,
+  "preload": "Object.defineProperty(window, '__stage', { configurable: true, get() { return this.__s; }, set(v) { const warm = v._warm.bind(v); v._warm = () => { const t = performance.now(); while (performance.now() - t < 2500); warm(); }; this.__s = v; } }); const log = window.__introLog = { count: null, boom: null }; (function f() { const c = document.querySelector('.intro-count'); if (log.count === null && c && c.textContent) log.count = performance.now(); if (log.count !== null && log.boom === null && window.__stage && window.__stage.form === 4) log.boom = performance.now(); requestAnimationFrame(f); })();",
+  "steps": [
+    { "name": "slow warm-up: the countdown still runs before the detonation", "js": "new Promise(r => { const t = performance.now(); (function f() { const L = window.__introLog; if (L.boom !== null || performance.now() - t > 9000) r(L.boom !== null && L.boom - L.count > 1500); else requestAnimationFrame(f); })(); })", "expect": true, "timeout": 15000 }
+  ]
+}

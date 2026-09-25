@@ -6,6 +6,7 @@ import { initialTier } from './engine/quality.js';
 import { activeIndex, splitProgress, stageLayout } from './scroll-map.js';
 import { initDetails } from './details.js';
 import { initRail } from './rail.js';
+import { runIntro, shouldPlayIntro, sessionStore } from './intro.js';
 import { TAIL_RGB } from './engine/forms.js';
 
 const params = new URLSearchParams(location.search);
@@ -102,12 +103,24 @@ function pageMapping() {
   return document.body.dataset.page === 'home' ? HOME_MAPPING : [formFromName(document.body.dataset.form || 'galaxy')];
 }
 
+// Home only: the intro on the first visit per session, and the footer's "Replay intro".
+function wireIntro(stage) {
+  const replay = document.querySelector('.replay-intro');
+  if (!stage || env.reduced) { if (replay) replay.hidden = true; return; } // reduce motion: never an intro
+  if (document.body.dataset.page !== 'home') return;
+  if (shouldPlayIntro({ storage: sessionStore(), reduced: env.reduced, hash: location.hash, forced: env.forceIntro, disabled: env.nointro })) {
+    runIntro(stage, { flash: flashName });
+  }
+  replay?.addEventListener('click', () => runIntro(stage, { flash: flashName }));
+}
+
 function main() {
   const stage = bootStage();
   if (stage) wireMapping(stage, pageMapping());
   wireNameSwell();
   initDetails({ fine: env.fine, reduced: env.reduced, tail: () => TAIL_RGB[stage ? stage.form : 4] });
   initRail({ enabled: env.fine && !env.mobile });
+  wireIntro(stage);
 }
 
 main();
