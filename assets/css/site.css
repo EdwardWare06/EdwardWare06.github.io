@@ -262,6 +262,8 @@ body:is([data-page="project"],[data-page="about"]) .sec{min-height:85vh}
 
 /* phones: the stage sits centred behind the hero text, so it gets a dark field; spec labels use --muted (spec §8) */
 @media (max-width:1023px){
-  .hero-block,.lost-msg{background:rgba(2,3,8,.7);box-shadow:0 0 70px 50px rgba(2,3,8,.7);border-radius:24px}
+  /* not during the intro: the Big Bang point sits behind the hero block */
+  body:not(.ih-name) .hero-block,.lost-msg{background:rgba(2,3,8,.7);box-shadow:0 0 70px 50px rgba(2,3,8,.7);border-radius:24px}
+  .hero-block{transition:background-color .9s,box-shadow .9s}
   .spec dt{color:var(--muted)}
 }

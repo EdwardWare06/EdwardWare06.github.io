@@ -1,0 +1,11 @@
+{
+  "url": "http://localhost:8080/?intro",
+  "viewport": [390, 844],
+  "mobile": true,
+  "touch": true,
+  "settle": 500,
+  "steps": [
+    { "name": "phone intro: no dark field over the point during the countdown", "waitFor": "window.__stage && window.__stage.ready", "wait": 800, "js": "[document.body.classList.contains('ih-name'), getComputedStyle(document.querySelector('.hero-block')).backgroundColor]", "expect": [true, "rgba(0, 0, 0, 0)"], "shot": "intro-phone-point.png" },
+    { "name": "after the intro, the hero text gets its field", "waitFor": "!document.querySelector('.intro')", "timeout": 15000, "wait": 1500, "js": "getComputedStyle(document.querySelector('.hero-block')).backgroundColor", "expect": "rgba(2, 3, 8, 0.7)", "shot": "intro-phone-end.png" }
+  ]
+}
