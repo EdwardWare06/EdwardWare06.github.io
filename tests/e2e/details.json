@@ -18,6 +18,7 @@
     { "js": "(window.scrollTo(0, 0), document.querySelector('.skip-link').focus(), true)", "wait": 200 },
     { "key": "Tab" },
     { "key": "Tab", "wait": 450 },
-    { "name": "keyboard focus: WORK with a visible ring, decoded", "js": "[document.activeElement.textContent, getComputedStyle(document.activeElement).outlineStyle]", "expect": ["WORK", "solid"] }
+    { "name": "keyboard focus: WORK with a visible ring, decoded", "js": "[document.activeElement.textContent, getComputedStyle(document.activeElement).outlineStyle]", "expect": ["WORK", "solid"] },
+    { "name": "decoding links keep a clean accessible name", "js": "[...document.querySelectorAll('.nav a:not(.home), .dec')].map(a => { a.focus(); return a.getAttribute('aria-label') || a.textContent; })", "expect": ["WORK", "ABOUT", "TIMELINE", "RESUME", "edwardware2006@gmail.com", "github.com/EdwardWare06"] }
   ]
 }

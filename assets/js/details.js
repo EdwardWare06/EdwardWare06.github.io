@@ -9,6 +9,7 @@ export function initDetails({ fine = true, reduced = false, tail = () => '255,22
 
   // signal: nav labels and contact links resolve from static on hover and on keyboard focus
   document.querySelectorAll('.nav a:not(.home), .dec').forEach(el => {
+    el.setAttribute('aria-label', el.textContent.trim()); // screen readers hear the word, never the static
     const run = () => decode(el, { duration: 320, reduced });
     el.addEventListener('mouseenter', run);
     el.addEventListener('focus', run);
